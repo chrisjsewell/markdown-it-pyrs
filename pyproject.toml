@@ -1,0 +1,46 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "markdown_it_pyrs"
+dynamic = ["version"]
+description = "A Python interface for markdown-it.rs, using Rust for blazingly fast Markdown parsing ⚡️"
+readme = "README.md"
+authors = [{name = "Chris Sewell", email = "chrisj_sewell@hotmail.com"}]
+license = {file = "LICENSE"}
+requires-python = ">=3.8"
+keywords = ["markdown", "lexer", "parser", "commonmark", "markdown-it"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Text Processing :: Markup",
+]
+
+[project.urls]
+Homepage = "https://github.com/chrisjsewell/markdown-it-pyrs"
+
+[project.optional-dependencies]
+testing = [
+    "pytest",
+]
+benchmarking = [
+    "pytest",
+    "pytest-benchmark",
+    "markdown-it-py",
+]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+
+[tool.isort]
+profile = "black"
+force_sort_within_sections = true
+
+[tool.ruff]
+line-length = 100
+extend-select = ["B0", "C4", "ICN", "ISC", "N", "RUF", "SIM"]
