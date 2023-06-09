@@ -33,7 +33,7 @@ Then use it like you would markdown-it-py:
 ```python
 from markdown_it_pyrs import MarkdownIt
 
-md = MarkdownIt()
+md = MarkdownIt("commonmark")
 md.enable("table")
 md.render("Hello, world!")
 ```

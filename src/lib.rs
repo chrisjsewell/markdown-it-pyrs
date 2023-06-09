@@ -1,14 +1,39 @@
 use pyo3::prelude::*;
 
+/// The initial configuration of the parser
 enum Config {
     CommonMark,
     Zero,
 }
 
-enum Plugin {
+/// All the rules that can be enabled
+enum Rules {
+    // commonmark block
+    Blockquote,
+    Code,
+    Fence,
+    Heading,
+    Hr,
+    Lheading,
+    List,
+    Paragraph,
+    Reference,
+    // commonmark inline
+    Autolink,
+    Backticks,
+    Emphasis,
+    Entity,
+    Escape,
+    Image,
+    Link,
+    Newline,
+    // commonmark html
+    HtmlBlock,
+    HtmlInline,
+    // extras
     Linkify,
     Replacements,
-    SmartQuotes,
+    Smartquotes,
     Strikethrough,
     Table,
 }
@@ -18,7 +43,8 @@ enum Plugin {
 struct MarkdownIt {
     /// The initial configuration of the parser
     config: Config,
-    extensions: Vec<Plugin>,
+    /// All the rules to be enabled
+    enable_list: Vec<Rules>,
 }
 
 impl MarkdownIt {
@@ -32,21 +58,78 @@ impl MarkdownIt {
             }
             Config::Zero => {}
         }
-        for plugin in &self.extensions {
+        for plugin in &self.enable_list {
             match plugin {
-                Plugin::Linkify => {
+                Rules::Blockquote => {
+                    markdown_it::plugins::cmark::block::blockquote::add(&mut parser);
+                }
+                Rules::Code => {
+                    markdown_it::plugins::cmark::block::code::add(&mut parser);
+                }
+                Rules::Fence => {
+                    markdown_it::plugins::cmark::block::fence::add(&mut parser);
+                }
+                Rules::Heading => {
+                    markdown_it::plugins::cmark::block::heading::add(&mut parser);
+                }
+                Rules::Hr => {
+                    markdown_it::plugins::cmark::block::hr::add(&mut parser);
+                }
+                Rules::Lheading => {
+                    markdown_it::plugins::cmark::block::lheading::add(&mut parser);
+                }
+                Rules::List => {
+                    markdown_it::plugins::cmark::block::list::add(&mut parser);
+                }
+                Rules::Paragraph => {
+                    markdown_it::plugins::cmark::block::paragraph::add(&mut parser);
+                }
+                Rules::Reference => {
+                    markdown_it::plugins::cmark::block::reference::add(&mut parser);
+                }
+                Rules::Autolink => {
+                    markdown_it::plugins::cmark::inline::autolink::add(&mut parser);
+                }
+                Rules::Backticks => {
+                    markdown_it::plugins::cmark::inline::backticks::add(&mut parser);
+                }
+                Rules::Emphasis => {
+                    markdown_it::plugins::cmark::inline::emphasis::add(&mut parser);
+                }
+                Rules::Entity => {
+                    markdown_it::plugins::cmark::inline::entity::add(&mut parser);
+                }
+                Rules::Escape => {
+                    markdown_it::plugins::cmark::inline::escape::add(&mut parser);
+                }
+                Rules::Image => {
+                    markdown_it::plugins::cmark::inline::image::add(&mut parser);
+                }
+                Rules::Link => {
+                    markdown_it::plugins::cmark::inline::link::add(&mut parser);
+                }
+                Rules::Newline => {
+                    markdown_it::plugins::cmark::inline::newline::add(&mut parser);
+                }
+                Rules::HtmlBlock => {
+                    markdown_it::plugins::html::html_block::add(&mut parser);
+                }
+                Rules::HtmlInline => {
+                    markdown_it::plugins::html::html_inline::add(&mut parser);
+                }
+                Rules::Linkify => {
                     markdown_it::plugins::extra::linkify::add(&mut parser);
                 }
-                Plugin::Replacements => {
+                Rules::Replacements => {
                     markdown_it::plugins::extra::typographer::add(&mut parser);
                 }
-                Plugin::SmartQuotes => {
+                Rules::Smartquotes => {
                     markdown_it::plugins::extra::smartquotes::add(&mut parser);
                 }
-                Plugin::Strikethrough => {
+                Rules::Strikethrough => {
                     markdown_it::plugins::extra::strikethrough::add(&mut parser);
                 }
-                Plugin::Table => {
+                Rules::Table => {
                     markdown_it::plugins::extra::tables::add(&mut parser);
                 }
             }
@@ -72,7 +155,7 @@ impl MarkdownIt {
         if found {
             Ok(MarkdownIt {
                 config: config_enum,
-                extensions: Vec::new(),
+                enable_list: Vec::new(),
             })
         } else {
             Err(pyo3::exceptions::PyValueError::new_err(format!(
@@ -83,14 +166,33 @@ impl MarkdownIt {
     }
 
     /// Enable a rule
-    fn enable(&mut self, extension: &str) -> PyResult<()> {
+    fn enable(&mut self, name: &str) -> PyResult<()> {
         let mut found = true;
-        match extension {
-            "linkify" => self.extensions.push(Plugin::Linkify),
-            "replacements" => self.extensions.push(Plugin::Replacements),
-            "smartquotes" => self.extensions.push(Plugin::SmartQuotes),
-            "strikethrough" => self.extensions.push(Plugin::Strikethrough),
-            "table" => self.extensions.push(Plugin::Table),
+        match name {
+            "blockquote" => self.enable_list.push(Rules::Blockquote),
+            "code" => self.enable_list.push(Rules::Code),
+            "fence" => self.enable_list.push(Rules::Fence),
+            "heading" => self.enable_list.push(Rules::Heading),
+            "hr" => self.enable_list.push(Rules::Hr),
+            "lheading" => self.enable_list.push(Rules::Lheading),
+            "list" => self.enable_list.push(Rules::List),
+            "paragraph" => self.enable_list.push(Rules::Paragraph),
+            "reference" => self.enable_list.push(Rules::Reference),
+            "autolink" => self.enable_list.push(Rules::Autolink),
+            "backticks" => self.enable_list.push(Rules::Backticks),
+            "emphasis" => self.enable_list.push(Rules::Emphasis),
+            "entity" => self.enable_list.push(Rules::Entity),
+            "escape" => self.enable_list.push(Rules::Escape),
+            "image" => self.enable_list.push(Rules::Image),
+            "link" => self.enable_list.push(Rules::Link),
+            "newline" => self.enable_list.push(Rules::Newline),
+            "html_block" => self.enable_list.push(Rules::HtmlBlock),
+            "html_inline" => self.enable_list.push(Rules::HtmlInline),
+            "linkify" => self.enable_list.push(Rules::Linkify),
+            "replacements" => self.enable_list.push(Rules::Replacements),
+            "smartquotes" => self.enable_list.push(Rules::Smartquotes),
+            "strikethrough" => self.enable_list.push(Rules::Strikethrough),
+            "table" => self.enable_list.push(Rules::Table),
             _ => {
                 found = false;
             }
@@ -100,7 +202,7 @@ impl MarkdownIt {
         } else {
             Err(pyo3::exceptions::PyValueError::new_err(format!(
                 "Unknown rule: {}",
-                extension
+                name
             )))
         }
     }
