@@ -127,7 +127,7 @@ impl Node {
 }
 
 // Take a markdown_it::Node and return a Python compatible Node
-pub fn create_node(node: &markdown_it::Node) -> Node {
+pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
     // default to a node with the same name as the markdown_it::Node
     let mut py_node = Node::new(node.name());
 
@@ -143,27 +143,23 @@ pub fn create_node(node: &markdown_it::Node) -> Node {
         py_node.name = "root".to_string();
     } else if let Some(node_value) = node.cast::<markdown_it::parser::inline::Text>() {
         py_node.name = "text".to_string();
-        Python::with_gil(|py| {
-            py_node.meta.insert(
-                "content".to_string(),
-                node_value.content.to_string().into_py(py),
-            );
-        });
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
     } else if let Some(node_value) = node.cast::<markdown_it::parser::inline::TextSpecial>() {
         py_node.name = "text_special".to_string();
-        Python::with_gil(|py| {
-            py_node.meta.insert(
-                "content".to_string(),
-                node_value.content.to_string().into_py(py),
-            );
-            py_node.meta.insert(
-                "markup".to_string(),
-                node_value.markup.to_string().into_py(py),
-            );
-            py_node
-                .meta
-                .insert("info".to_string(), node_value.info.into_py(py));
-        });
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
+        py_node.meta.insert(
+            "markup".to_string(),
+            node_value.markup.to_string().into_py(py),
+        );
+        py_node
+            .meta
+            .insert("info".to_string(), node_value.info.into_py(py));
     } else if let Some(_) =
         node.cast::<markdown_it::plugins::cmark::block::blockquote::Blockquote>()
     {
@@ -172,89 +168,75 @@ pub fn create_node(node: &markdown_it::Node) -> Node {
         node.cast::<markdown_it::plugins::cmark::block::code::CodeBlock>()
     {
         py_node.name = "code_block".to_string();
-        Python::with_gil(|py| {
-            py_node.meta.insert(
-                "content".to_string(),
-                node_value.content.to_string().into_py(py),
-            );
-        });
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::block::fence::CodeFence>()
     {
         py_node.name = "fence".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("info".to_string(), node_value.info.to_string().into_py(py));
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-            py_node
-                .meta
-                .insert("marker_len".to_string(), node_value.marker_len.into_py(py));
-            py_node.meta.insert(
-                "content".to_string(),
-                node_value.content.to_string().into_py(py),
-            );
-            py_node.meta.insert(
-                "lang_prefix".to_string(),
-                node_value.lang_prefix.into_py(py),
-            );
-        });
+        py_node
+            .meta
+            .insert("info".to_string(), node_value.info.to_string().into_py(py));
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
+        py_node
+            .meta
+            .insert("marker_len".to_string(), node_value.marker_len.into_py(py));
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
+        py_node.meta.insert(
+            "lang_prefix".to_string(),
+            node_value.lang_prefix.into_py(py),
+        );
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::block::heading::ATXHeading>()
     {
         py_node.name = "heading".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("level".to_string(), node_value.level.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("level".to_string(), node_value.level.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::block::hr::ThematicBreak>()
     {
         py_node.name = "hr".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-            py_node
-                .meta
-                .insert("marker_len".to_string(), node_value.marker_len.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
+        py_node
+            .meta
+            .insert("marker_len".to_string(), node_value.marker_len.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::block::lheading::SetextHeader>()
     {
         py_node.name = "lheading".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("level".to_string(), node_value.level.into_py(py));
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("level".to_string(), node_value.level.into_py(py));
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::block::list::BulletList>()
     {
         py_node.name = "bullet_list".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::block::list::OrderedList>()
     {
         py_node.name = "ordered_list".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("start".to_string(), node_value.start.into_py(py));
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("start".to_string(), node_value.start.into_py(py));
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
     } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::block::list::ListItem>() {
         py_node.name = "list_item".to_string();
     } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::block::paragraph::Paragraph>()
@@ -264,74 +246,62 @@ pub fn create_node(node: &markdown_it::Node) -> Node {
         node.cast::<markdown_it::plugins::cmark::inline::autolink::Autolink>()
     {
         py_node.name = "autolink".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("url".to_string(), node_value.url.to_string().into_py(py));
-        });
+        py_node
+            .meta
+            .insert("url".to_string(), node_value.url.to_string().into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::inline::backticks::CodeInline>()
     {
         py_node.name = "code_inline".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-            py_node
-                .meta
-                .insert("marker_len".to_string(), node_value.marker_len.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
+        py_node
+            .meta
+            .insert("marker_len".to_string(), node_value.marker_len.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::inline::emphasis::Em>()
     {
         py_node.name = "em".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::inline::emphasis::Strong>()
     {
         py_node.name = "strong".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::cmark::inline::image::Image>()
     {
         py_node.name = "image".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("url".to_string(), node_value.url.to_string().into_py(py));
-            match &node_value.title {
-                Some(title) => {
-                    py_node
-                        .meta
-                        .insert("title".to_string(), title.to_string().into_py(py));
-                }
-                None => {}
+        py_node
+            .meta
+            .insert("url".to_string(), node_value.url.to_string().into_py(py));
+        match &node_value.title {
+            Some(title) => {
+                py_node
+                    .meta
+                    .insert("title".to_string(), title.to_string().into_py(py));
             }
-        });
+            None => {}
+        }
     } else if let Some(node_value) = node.cast::<markdown_it::plugins::cmark::inline::link::Link>()
     {
         py_node.name = "link".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("url".to_string(), node_value.url.to_string().into_py(py));
-            match &node_value.title {
-                Some(title) => {
-                    py_node
-                        .meta
-                        .insert("title".to_string(), title.to_string().into_py(py));
-                }
-                None => {}
+        py_node
+            .meta
+            .insert("url".to_string(), node_value.url.to_string().into_py(py));
+        match &node_value.title {
+            Some(title) => {
+                py_node
+                    .meta
+                    .insert("title".to_string(), title.to_string().into_py(py));
             }
-        });
+            None => {}
+        }
     } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::inline::newline::Hardbreak>() {
         py_node.name = "hardbreak".to_string();
     } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::inline::newline::Softbreak>() {
@@ -340,65 +310,55 @@ pub fn create_node(node: &markdown_it::Node) -> Node {
         node.cast::<markdown_it::plugins::html::html_inline::HtmlInline>()
     {
         py_node.name = "html_inline".to_string();
-        Python::with_gil(|py| {
-            py_node.meta.insert(
-                "content".to_string(),
-                node_value.content.to_string().into_py(py),
-            );
-        });
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::html::html_block::HtmlBlock>()
     {
         py_node.name = "html_block".to_string();
-        Python::with_gil(|py| {
-            py_node.meta.insert(
-                "content".to_string(),
-                node_value.content.to_string().into_py(py),
-            );
-        });
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
     } else if let Some(node_value) = node.cast::<markdown_it::plugins::extra::linkify::Linkified>()
     {
         py_node.name = "linkify".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("url".to_string(), node_value.url.to_string().into_py(py));
-        });
+        py_node
+            .meta
+            .insert("url".to_string(), node_value.url.to_string().into_py(py));
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::extra::strikethrough::Strikethrough>()
     {
         py_node.name = "strikethrough".to_string();
-        Python::with_gil(|py| {
-            py_node
-                .meta
-                .insert("marker".to_string(), node_value.marker.into_py(py));
-        });
+        py_node
+            .meta
+            .insert("marker".to_string(), node_value.marker.into_py(py));
     } else if let Some(node_value) = node.cast::<markdown_it::plugins::extra::tables::Table>() {
         py_node.name = "table".to_string();
-        Python::with_gil(|py| {
-            py_node.meta.insert(
-                "alignments".to_string(),
-                node_value
-                    .alignments
-                    .iter()
-                    .map(|x| match x {
-                        markdown_it::plugins::extra::tables::ColumnAlignment::None => {
-                            "none".to_string()
-                        }
-                        markdown_it::plugins::extra::tables::ColumnAlignment::Left => {
-                            "left".to_string()
-                        }
-                        markdown_it::plugins::extra::tables::ColumnAlignment::Center => {
-                            "center".to_string()
-                        }
-                        markdown_it::plugins::extra::tables::ColumnAlignment::Right => {
-                            "right".to_string()
-                        }
-                    })
-                    .collect::<Vec<String>>()
-                    .into_py(py),
-            );
-        });
+        py_node.meta.insert(
+            "alignments".to_string(),
+            node_value
+                .alignments
+                .iter()
+                .map(|x| match x {
+                    markdown_it::plugins::extra::tables::ColumnAlignment::None => {
+                        "none".to_string()
+                    }
+                    markdown_it::plugins::extra::tables::ColumnAlignment::Left => {
+                        "left".to_string()
+                    }
+                    markdown_it::plugins::extra::tables::ColumnAlignment::Center => {
+                        "center".to_string()
+                    }
+                    markdown_it::plugins::extra::tables::ColumnAlignment::Right => {
+                        "right".to_string()
+                    }
+                })
+                .collect::<Vec<String>>()
+                .into_py(py),
+        );
     } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableBody>() {
         py_node.name = "tbody".to_string();
     } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableRow>() {

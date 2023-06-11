@@ -227,29 +227,27 @@ impl MarkdownIt {
     }
 
     /// Create a syntax tree from the markdown string.
-    fn tree(&self, src: &str) -> nodes::Node {
+    fn tree(&self, py: Python, src: &str) -> nodes::Node {
         let parser = &mut self.create_parser();
         let ast = parser.parse(src);
 
-        fn walk_recursive<'a>(node: &'a markdown_it::Node, py_node: &mut nodes::Node) {
+        fn walk_recursive<'a>(py: Python, node: &'a markdown_it::Node, py_node: &mut nodes::Node) {
             for n in node.children.iter() {
-                let mut py_node_child = nodes::create_node(&n);
+                let mut py_node_child = nodes::create_node(py, &n);
 
                 stacker::maybe_grow(64 * 1024, 1024 * 1024, || {
-                    walk_recursive(n, &mut py_node_child);
+                    walk_recursive(py, n, &mut py_node_child);
                 });
 
-                Python::with_gil(|py| {
-                    py_node.children.push(Py::new(py, py_node_child).unwrap());
-                });
+                py_node.children.push(Py::new(py, py_node_child).unwrap());
             }
         }
 
-        let mut py_node = nodes::create_node(&ast);
+        let mut py_node = nodes::create_node(py, &ast);
 
-        walk_recursive(&ast, &mut py_node);
+        walk_recursive(py, &ast, &mut py_node);
 
-        return py_node;
+        py_node
     }
 }
 
