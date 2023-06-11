@@ -296,6 +296,7 @@ version = "0.0.1"
 dependencies = [
  "markdown-it",
  "pyo3",
+ "stacker",
 ]
 
 [[package]]

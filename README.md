@@ -45,3 +45,13 @@ I'm quite new to Rust, so if you see something that could be improved, please op
 [PyO3](https://pyo3.rs) and [Maturin](https://www.maturin.rs) are used to build the Python package, by wrapping [markdown-it.rs](https://github.com/rlidwka/markdown-it.rs) in a Python module.
 
 [pre-commit](https://pre-commit.com) is used to run code formatting and linting checks, and [tox](https://tox.readthedocs.io) is used to run tests.
+
+## TODO
+
+Open issue upstream:
+
+- no `text_join` rule (to join adjacent `text` and `text_special` tokens)
+- Capture reference nodes
+- Capture link reference definitions
+- Turn off code rule
+- better "cross-language" AST representation

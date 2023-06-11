@@ -1,5 +1,7 @@
 use pyo3::prelude::*;
 
+mod nodes;
+
 /// The initial configuration of the parser
 enum Config {
     CommonMark,
@@ -45,6 +47,9 @@ struct MarkdownIt {
     config: Config,
     /// All the rules to be enabled
     enable_list: Vec<Rules>,
+
+    // TODO put options in separate struct
+    xhtml_out: bool,
 }
 
 impl MarkdownIt {
@@ -143,62 +148,61 @@ impl MarkdownIt {
     #[new]
     #[pyo3(signature = (config="commonmark"))]
     fn new(config: &str) -> PyResult<Self> {
-        let mut found = true;
-        let config_enum = match config {
-            "commonmark" => Config::CommonMark,
-            "zero" => Config::Zero,
-            _ => {
-                found = false;
-                Config::Zero
-            }
-        };
-        if found {
-            Ok(MarkdownIt {
-                config: config_enum,
+        match config {
+            "commonmark" => Ok(MarkdownIt {
+                config: Config::CommonMark,
                 enable_list: Vec::new(),
-            })
-        } else {
-            Err(pyo3::exceptions::PyValueError::new_err(format!(
+                xhtml_out: true,
+            }),
+            "zero" => Ok(MarkdownIt {
+                config: Config::Zero,
+                enable_list: Vec::new(),
+                xhtml_out: false,
+            }),
+            _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
                 "Unknown config: {}",
                 config
-            )))
+            ))),
         }
     }
 
     /// Enable a rule
-    fn enable(&mut self, name: &str) -> PyResult<()> {
+    fn enable(slf: Py<Self>, name: &str) -> PyResult<Py<Self>> {
         let mut found = true;
-        match name {
-            "blockquote" => self.enable_list.push(Rules::Blockquote),
-            "code" => self.enable_list.push(Rules::Code),
-            "fence" => self.enable_list.push(Rules::Fence),
-            "heading" => self.enable_list.push(Rules::Heading),
-            "hr" => self.enable_list.push(Rules::Hr),
-            "lheading" => self.enable_list.push(Rules::Lheading),
-            "list" => self.enable_list.push(Rules::List),
-            "paragraph" => self.enable_list.push(Rules::Paragraph),
-            "reference" => self.enable_list.push(Rules::Reference),
-            "autolink" => self.enable_list.push(Rules::Autolink),
-            "backticks" => self.enable_list.push(Rules::Backticks),
-            "emphasis" => self.enable_list.push(Rules::Emphasis),
-            "entity" => self.enable_list.push(Rules::Entity),
-            "escape" => self.enable_list.push(Rules::Escape),
-            "image" => self.enable_list.push(Rules::Image),
-            "link" => self.enable_list.push(Rules::Link),
-            "newline" => self.enable_list.push(Rules::Newline),
-            "html_block" => self.enable_list.push(Rules::HtmlBlock),
-            "html_inline" => self.enable_list.push(Rules::HtmlInline),
-            "linkify" => self.enable_list.push(Rules::Linkify),
-            "replacements" => self.enable_list.push(Rules::Replacements),
-            "smartquotes" => self.enable_list.push(Rules::Smartquotes),
-            "strikethrough" => self.enable_list.push(Rules::Strikethrough),
-            "table" => self.enable_list.push(Rules::Table),
-            _ => {
-                found = false;
+        Python::with_gil(|py| {
+            let mut slf_mut = slf.borrow_mut(py);
+            match name {
+                "blockquote" => slf_mut.enable_list.push(Rules::Blockquote),
+                "code" => slf_mut.enable_list.push(Rules::Code),
+                "fence" => slf_mut.enable_list.push(Rules::Fence),
+                "heading" => slf_mut.enable_list.push(Rules::Heading),
+                "hr" => slf_mut.enable_list.push(Rules::Hr),
+                "lheading" => slf_mut.enable_list.push(Rules::Lheading),
+                "list" => slf_mut.enable_list.push(Rules::List),
+                "paragraph" => slf_mut.enable_list.push(Rules::Paragraph),
+                "reference" => slf_mut.enable_list.push(Rules::Reference),
+                "autolink" => slf_mut.enable_list.push(Rules::Autolink),
+                "backticks" => slf_mut.enable_list.push(Rules::Backticks),
+                "emphasis" => slf_mut.enable_list.push(Rules::Emphasis),
+                "entity" => slf_mut.enable_list.push(Rules::Entity),
+                "escape" => slf_mut.enable_list.push(Rules::Escape),
+                "image" => slf_mut.enable_list.push(Rules::Image),
+                "link" => slf_mut.enable_list.push(Rules::Link),
+                "newline" => slf_mut.enable_list.push(Rules::Newline),
+                "html_block" => slf_mut.enable_list.push(Rules::HtmlBlock),
+                "html_inline" => slf_mut.enable_list.push(Rules::HtmlInline),
+                "linkify" => slf_mut.enable_list.push(Rules::Linkify),
+                "replacements" => slf_mut.enable_list.push(Rules::Replacements),
+                "smartquotes" => slf_mut.enable_list.push(Rules::Smartquotes),
+                "strikethrough" => slf_mut.enable_list.push(Rules::Strikethrough),
+                "table" => slf_mut.enable_list.push(Rules::Table),
+                _ => {
+                    found = false;
+                }
             }
-        }
+        });
         if found {
-            Ok(())
+            Ok(slf)
         } else {
             Err(pyo3::exceptions::PyValueError::new_err(format!(
                 "Unknown rule: {}",
@@ -212,24 +216,40 @@ impl MarkdownIt {
         let parser = &mut self.create_parser();
         let ast = parser.parse(src);
 
-        return Ok(ast.render());
+        match self.xhtml_out {
+            true => {
+                return Ok(ast.xrender());
+            }
+            false => {
+                return Ok(ast.render());
+            }
+        }
     }
 
-    /// Parse the source string to a string representation of the AST
-    fn _ast_debug(&self, src: &str) -> PyResult<String> {
+    /// Create a syntax tree from the markdown string.
+    fn tree(&self, src: &str) -> nodes::Node {
         let parser = &mut self.create_parser();
         let ast = parser.parse(src);
 
-        // walk through the ast and save the node_type to a vector
-        let mut node_types: Vec<String> = Vec::new();
-        ast.walk(|node, depth| {
-            let prefix = " ".repeat(depth.try_into().unwrap());
-            let name = &node.name()[node.name().rfind("::").map(|x| x + 2).unwrap_or_default()..]
-                .to_lowercase();
-            node_types.push(format!("{}<{}>", prefix, name))
-        });
+        fn walk_recursive<'a>(node: &'a markdown_it::Node, py_node: &mut nodes::Node) {
+            for n in node.children.iter() {
+                let mut py_node_child = nodes::create_node(&n);
 
-        return Ok(node_types.join("\n"));
+                stacker::maybe_grow(64 * 1024, 1024 * 1024, || {
+                    walk_recursive(n, &mut py_node_child);
+                });
+
+                Python::with_gil(|py| {
+                    py_node.children.push(Py::new(py, py_node_child).unwrap());
+                });
+            }
+        }
+
+        let mut py_node = nodes::create_node(&ast);
+
+        walk_recursive(&ast, &mut py_node);
+
+        return py_node;
     }
 }
 
@@ -240,5 +260,6 @@ impl MarkdownIt {
 fn markdown_it_pyrs(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     m.add_class::<MarkdownIt>()?;
+    m.add_class::<nodes::Node>()?;
     Ok(())
 }
