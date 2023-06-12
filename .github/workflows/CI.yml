@@ -20,7 +20,8 @@ permissions:
 jobs:
 
   test-python:
-    name: test ${{ matrix.python-version }}
+
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -30,9 +31,6 @@ jobs:
         - '3.10'
         - '3.11'
         - 'pypy3.8'
-
-    runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: install rust stable
@@ -54,8 +52,8 @@ jobs:
   linux:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10"]
         target:
         - x86_64
         - x86
@@ -63,19 +61,11 @@ jobs:
         - armv7
         # - s390x  # TODO build fails: "error: failed to run custom build command for `psm v0.1.21`""
         - ppc64le
-        include:
-        - python-version: "3.8"
-          target: x86_64
-        - python-version: "3.9"
-          target: x86_64
-        - python-version: "3.11"
-          target: x86_64
-      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.10"
       - name: Build wheels
         uses: PyO3/maturin-action@v1
         with:
@@ -115,9 +105,9 @@ jobs:
   windows:
     runs-on: windows-latest
     strategy:
+      fail-fast: false
       matrix:
         target: [x64, x86]
-      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -147,9 +137,9 @@ jobs:
   macos:
     runs-on: macos-latest
     strategy:
+      fail-fast: false
       matrix:
         target: [x86_64, aarch64]
-      fail-fast: false
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
@@ -203,7 +193,6 @@ jobs:
           allowed-failures: coverage
 
   release:
-    name: Release
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
     needs: [test-python, linux, windows, macos, sdist]
