@@ -67,6 +67,8 @@ I'm quite new to Rust, so if you see something that could be improved, please op
 
 Improvements:
 
+- disable rules
+
 - Allow to override options:
   - xhtml_out: Use `"/"` to close single tags (e.g. `<br />`)
   - lang_prefix: Prefix for language classes on fenced code blocks
@@ -83,7 +85,6 @@ Open issue upstream:
 - Turn off code rule
 - better "cross-language" AST representation
 - differing behaviour of linkify and normalize_url/commonmark_extras test failures
+- quote characters for smart-quotes should be variable at run-time?
 
 Maintenance:
-
-- Get `maturin develop` to run on tox calls

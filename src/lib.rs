@@ -2,145 +2,12 @@ use pyo3::prelude::*;
 
 mod nodes;
 
-/// The initial configuration of the parser
-enum Config {
-    CommonMark,
-    Zero,
-}
-
-/// All the rules that can be enabled
-enum Rules {
-    // commonmark block
-    Blockquote,
-    Code,
-    Fence,
-    Heading,
-    Hr,
-    Lheading,
-    List,
-    Paragraph,
-    Reference,
-    // commonmark inline
-    Autolink,
-    Backticks,
-    Emphasis,
-    Entity,
-    Escape,
-    Image,
-    Link,
-    Newline,
-    // commonmark html
-    HtmlBlock,
-    HtmlInline,
-    // extras
-    Linkify,
-    Replacements,
-    Smartquotes,
-    Strikethrough,
-    Table,
-}
-
 /// Main parser class
 #[pyclass]
 struct MarkdownIt {
-    /// The initial configuration of the parser
-    config: Config,
-    /// All the rules to be enabled
-    enable_list: Vec<Rules>,
+    parser: markdown_it::MarkdownIt,
 
-    // TODO put options in separate struct
     xhtml_out: bool,
-}
-
-impl MarkdownIt {
-    /// Create a new parser instance
-    fn create_parser(&self) -> markdown_it::MarkdownIt {
-        let mut parser = markdown_it::MarkdownIt::new();
-        match self.config {
-            Config::CommonMark => {
-                markdown_it::plugins::cmark::add(&mut parser);
-                markdown_it::plugins::html::add(&mut parser);
-            }
-            Config::Zero => {}
-        }
-        for plugin in &self.enable_list {
-            match plugin {
-                Rules::Blockquote => {
-                    markdown_it::plugins::cmark::block::blockquote::add(&mut parser);
-                }
-                Rules::Code => {
-                    markdown_it::plugins::cmark::block::code::add(&mut parser);
-                }
-                Rules::Fence => {
-                    markdown_it::plugins::cmark::block::fence::add(&mut parser);
-                }
-                Rules::Heading => {
-                    markdown_it::plugins::cmark::block::heading::add(&mut parser);
-                }
-                Rules::Hr => {
-                    markdown_it::plugins::cmark::block::hr::add(&mut parser);
-                }
-                Rules::Lheading => {
-                    markdown_it::plugins::cmark::block::lheading::add(&mut parser);
-                }
-                Rules::List => {
-                    markdown_it::plugins::cmark::block::list::add(&mut parser);
-                }
-                Rules::Paragraph => {
-                    markdown_it::plugins::cmark::block::paragraph::add(&mut parser);
-                }
-                Rules::Reference => {
-                    markdown_it::plugins::cmark::block::reference::add(&mut parser);
-                }
-                Rules::Autolink => {
-                    markdown_it::plugins::cmark::inline::autolink::add(&mut parser);
-                }
-                Rules::Backticks => {
-                    markdown_it::plugins::cmark::inline::backticks::add(&mut parser);
-                }
-                Rules::Emphasis => {
-                    markdown_it::plugins::cmark::inline::emphasis::add(&mut parser);
-                }
-                Rules::Entity => {
-                    markdown_it::plugins::cmark::inline::entity::add(&mut parser);
-                }
-                Rules::Escape => {
-                    markdown_it::plugins::cmark::inline::escape::add(&mut parser);
-                }
-                Rules::Image => {
-                    markdown_it::plugins::cmark::inline::image::add(&mut parser);
-                }
-                Rules::Link => {
-                    markdown_it::plugins::cmark::inline::link::add(&mut parser);
-                }
-                Rules::Newline => {
-                    markdown_it::plugins::cmark::inline::newline::add(&mut parser);
-                }
-                Rules::HtmlBlock => {
-                    markdown_it::plugins::html::html_block::add(&mut parser);
-                }
-                Rules::HtmlInline => {
-                    markdown_it::plugins::html::html_inline::add(&mut parser);
-                }
-                Rules::Linkify => {
-                    markdown_it::plugins::extra::linkify::add(&mut parser);
-                }
-                Rules::Replacements => {
-                    markdown_it::plugins::extra::typographer::add(&mut parser);
-                }
-                Rules::Smartquotes => {
-                    markdown_it::plugins::extra::smartquotes::add(&mut parser);
-                }
-                Rules::Strikethrough => {
-                    markdown_it::plugins::extra::strikethrough::add(&mut parser);
-                }
-                Rules::Table => {
-                    markdown_it::plugins::extra::tables::add(&mut parser);
-                }
-            }
-        }
-        parser
-    }
 }
 
 #[pymethods]
@@ -149,14 +16,17 @@ impl MarkdownIt {
     #[pyo3(signature = (config="commonmark"))]
     fn new(config: &str) -> PyResult<Self> {
         match config {
-            "commonmark" => Ok(MarkdownIt {
-                config: Config::CommonMark,
-                enable_list: Vec::new(),
-                xhtml_out: true,
-            }),
+            "commonmark" => {
+                let mut parser = markdown_it::MarkdownIt::new();
+                markdown_it::plugins::cmark::add(&mut parser);
+                markdown_it::plugins::html::add(&mut parser);
+                Ok(MarkdownIt {
+                    parser,
+                    xhtml_out: true,
+                })
+            }
             "zero" => Ok(MarkdownIt {
-                config: Config::Zero,
-                enable_list: Vec::new(),
+                parser: markdown_it::MarkdownIt::new(),
                 xhtml_out: false,
             }),
             _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
@@ -166,70 +36,110 @@ impl MarkdownIt {
         }
     }
 
-    /// Enable a rule
-    fn enable(slf: Py<Self>, name: &str) -> PyResult<Py<Self>> {
-        let mut found = true;
-        Python::with_gil(|py| {
+    /// Enable a plugin
+    fn enable(slf: Py<Self>, py: Python, name: &str) -> PyResult<Py<Self>> {
+        {
             let mut slf_mut = slf.borrow_mut(py);
             match name {
-                "blockquote" => slf_mut.enable_list.push(Rules::Blockquote),
-                "code" => slf_mut.enable_list.push(Rules::Code),
-                "fence" => slf_mut.enable_list.push(Rules::Fence),
-                "heading" => slf_mut.enable_list.push(Rules::Heading),
-                "hr" => slf_mut.enable_list.push(Rules::Hr),
-                "lheading" => slf_mut.enable_list.push(Rules::Lheading),
-                "list" => slf_mut.enable_list.push(Rules::List),
-                "paragraph" => slf_mut.enable_list.push(Rules::Paragraph),
-                "reference" => slf_mut.enable_list.push(Rules::Reference),
-                "autolink" => slf_mut.enable_list.push(Rules::Autolink),
-                "backticks" => slf_mut.enable_list.push(Rules::Backticks),
-                "emphasis" => slf_mut.enable_list.push(Rules::Emphasis),
-                "entity" => slf_mut.enable_list.push(Rules::Entity),
-                "escape" => slf_mut.enable_list.push(Rules::Escape),
-                "image" => slf_mut.enable_list.push(Rules::Image),
-                "link" => slf_mut.enable_list.push(Rules::Link),
-                "newline" => slf_mut.enable_list.push(Rules::Newline),
-                "html_block" => slf_mut.enable_list.push(Rules::HtmlBlock),
-                "html_inline" => slf_mut.enable_list.push(Rules::HtmlInline),
-                "linkify" => slf_mut.enable_list.push(Rules::Linkify),
-                "replacements" => slf_mut.enable_list.push(Rules::Replacements),
-                "smartquotes" => slf_mut.enable_list.push(Rules::Smartquotes),
-                "strikethrough" => slf_mut.enable_list.push(Rules::Strikethrough),
-                "table" => slf_mut.enable_list.push(Rules::Table),
+                "blockquote" => {
+                    markdown_it::plugins::cmark::block::blockquote::add(&mut slf_mut.parser);
+                }
+                "code" => {
+                    markdown_it::plugins::cmark::block::code::add(&mut slf_mut.parser);
+                }
+                "fence" => {
+                    markdown_it::plugins::cmark::block::fence::add(&mut slf_mut.parser);
+                }
+                "heading" => {
+                    markdown_it::plugins::cmark::block::heading::add(&mut slf_mut.parser);
+                }
+                "hr" => {
+                    markdown_it::plugins::cmark::block::hr::add(&mut slf_mut.parser);
+                }
+                "lheading" => {
+                    markdown_it::plugins::cmark::block::lheading::add(&mut slf_mut.parser);
+                }
+                "list" => {
+                    markdown_it::plugins::cmark::block::list::add(&mut slf_mut.parser);
+                }
+                "paragraph" => {
+                    markdown_it::plugins::cmark::block::paragraph::add(&mut slf_mut.parser);
+                }
+                "reference" => {
+                    markdown_it::plugins::cmark::block::reference::add(&mut slf_mut.parser);
+                }
+                "autolink" => {
+                    markdown_it::plugins::cmark::inline::autolink::add(&mut slf_mut.parser);
+                }
+                "backticks" => {
+                    markdown_it::plugins::cmark::inline::backticks::add(&mut slf_mut.parser);
+                }
+                "emphasis" => {
+                    markdown_it::plugins::cmark::inline::emphasis::add(&mut slf_mut.parser);
+                }
+                "entity" => {
+                    markdown_it::plugins::cmark::inline::entity::add(&mut slf_mut.parser);
+                }
+                "escape" => {
+                    markdown_it::plugins::cmark::inline::escape::add(&mut slf_mut.parser);
+                }
+                "image" => {
+                    markdown_it::plugins::cmark::inline::image::add(&mut slf_mut.parser);
+                }
+                "link" => {
+                    markdown_it::plugins::cmark::inline::link::add(&mut slf_mut.parser);
+                }
+                "newline" => {
+                    markdown_it::plugins::cmark::inline::newline::add(&mut slf_mut.parser);
+                }
+                "html_block" => {
+                    markdown_it::plugins::html::html_block::add(&mut slf_mut.parser);
+                }
+                "html_inline" => {
+                    markdown_it::plugins::html::html_inline::add(&mut slf_mut.parser);
+                }
+                "linkify" => {
+                    markdown_it::plugins::extra::linkify::add(&mut slf_mut.parser);
+                }
+                "replacements" => {
+                    markdown_it::plugins::extra::typographer::add(&mut slf_mut.parser);
+                }
+                "smartquotes" => {
+                    markdown_it::plugins::extra::smartquotes::add(&mut slf_mut.parser);
+                }
+                "strikethrough" => {
+                    markdown_it::plugins::extra::strikethrough::add(&mut slf_mut.parser);
+                }
+                "table" => {
+                    markdown_it::plugins::extra::tables::add(&mut slf_mut.parser);
+                }
                 _ => {
-                    found = false;
+                    return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                        "Unknown rule: {}",
+                        name
+                    )))
                 }
             }
-        });
-        if found {
-            Ok(slf)
-        } else {
-            Err(pyo3::exceptions::PyValueError::new_err(format!(
-                "Unknown rule: {}",
-                name
-            )))
         }
+        Ok(slf)
     }
 
     /// Render markdown string into HTML.
-    fn render(&self, src: &str) -> PyResult<String> {
-        let parser = &mut self.create_parser();
-        let ast = parser.parse(src);
-
+    fn render(&self, src: &str) -> String {
+        let ast = self.parser.parse(src);
         match self.xhtml_out {
             true => {
-                return Ok(ast.xrender());
+                return ast.xrender();
             }
             false => {
-                return Ok(ast.render());
+                return ast.render();
             }
         }
     }
 
     /// Create a syntax tree from the markdown string.
     fn tree(&self, py: Python, src: &str) -> nodes::Node {
-        let parser = &mut self.create_parser();
-        let ast = parser.parse(src);
+        let ast = self.parser.parse(src);
 
         fn walk_recursive<'a>(py: Python, node: &'a markdown_it::Node, py_node: &mut nodes::Node) {
             for n in node.children.iter() {
@@ -244,7 +154,6 @@ impl MarkdownIt {
         }
 
         let mut py_node = nodes::create_node(py, &ast);
-
         walk_recursive(py, &ast, &mut py_node);
 
         py_node

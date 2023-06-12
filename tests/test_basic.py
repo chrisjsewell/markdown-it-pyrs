@@ -1,8 +1,20 @@
 from markdown_it_pyrs import MarkdownIt
+import pytest
 
 
-def test_render():
+def test_enable_unknown():
     mdit = MarkdownIt()
+    with pytest.raises(ValueError):
+        mdit.enable("unknown")
+
+
+def test_zero():
+    mdit = MarkdownIt("zero")
+    assert mdit.render("# markdown-it rulezz!") == "# markdown-it rulezz!\n"
+
+
+def test_zero_header():
+    mdit = MarkdownIt("zero").enable("heading")
     assert mdit.render("# markdown-it rulezz!") == "<h1>markdown-it rulezz!</h1>\n"
 
 
