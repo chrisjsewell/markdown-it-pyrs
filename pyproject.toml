@@ -27,6 +27,7 @@ Homepage = "https://github.com/chrisjsewell/markdown-it-pyrs"
 [project.optional-dependencies]
 testing = [
     "pytest",
+    "pytest-param-files",
 ]
 benchmarking = [
     "pytest",

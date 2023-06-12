@@ -82,6 +82,7 @@ Open issue upstream:
 - Capture link reference definitions
 - Turn off code rule
 - better "cross-language" AST representation
+- differing behaviour of linkify and normalize_url/commonmark_extras test failures
 
 Maintenance:
 
