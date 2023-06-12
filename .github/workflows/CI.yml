@@ -53,7 +53,7 @@ jobs:
         run: |
           set -e
           pip install markdown_it_pyrs --find-links dist --force-reinstall
-          pip install pytest
+          pip install pytest pytest-param-files
           pytest
       - name: pytest
         if: ${{ !startsWith(matrix.target, 'x86') && matrix.target != 'ppc64' }}
@@ -100,7 +100,7 @@ jobs:
         run: |
           set -e
           pip install markdown_it_pyrs --find-links dist --force-reinstall
-          pip install pytest
+          pip install pytest pytest-param-files
           pytest
 
   macos:
@@ -131,7 +131,7 @@ jobs:
         run: |
           set -e
           pip install markdown_it_pyrs --find-links dist --force-reinstall
-          pip install pytest
+          pip install pytest pytest-param-files
           pytest
 
   sdist:

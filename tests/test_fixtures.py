@@ -8,7 +8,7 @@ FIXTURE_PATH = Path(__file__).parent.joinpath("fixtures")
 
 
 @pytest.mark.parametrize(
-    "entry", json.loads(FIXTURE_PATH.joinpath("commonmark_spec.json").read_text())
+    "entry", json.loads(FIXTURE_PATH.joinpath("commonmark_spec.json").read_text("utf8"))
 )
 def test_cmark_spec(entry):
     md = MarkdownIt("commonmark")
