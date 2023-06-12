@@ -28,8 +28,8 @@ def test_commonmark_extras(file_params):
         pytest.skip("known issue")
     md = MarkdownIt()
     md = MarkdownIt("commonmark")
-    # md.options["langPrefix"] = ""
-    text = md.render(file_params.content).replace("language-", "")
+    md._unset_lang_prefix()
+    text = md.render(file_params.content)
     assert file_params.assert_expected(text, rstrip=True)
 
 

@@ -292,7 +292,7 @@ dependencies = [
 
 [[package]]
 name = "markdown_it_pyrs"
-version = "0.0.1"
+version = "0.1.0"
 dependencies = [
  "markdown-it",
  "pyo3",

@@ -85,6 +85,7 @@ Open issue upstream:
 - Turn off code rule
 - better "cross-language" AST representation
 - differing behaviour of linkify and normalize_url/commonmark_extras test failures
-- quote characters for smart-quotes should be variable at run-time?
+- quote characters for smart-quotes and lang_prefix for fence
+  should both be variable at run-time? (currently they both must be compiled)
 
 Maintenance:

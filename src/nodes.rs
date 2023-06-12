@@ -34,7 +34,7 @@ pub struct Node {
 impl Node {
     #[new]
     pub fn new(path: &str) -> Self {
-        Node {
+        Self {
             module: path.to_string(),
             name: "unknown".to_string(),
             children: Vec::new(),

@@ -6,7 +6,6 @@ mod nodes;
 #[pyclass]
 struct MarkdownIt {
     parser: markdown_it::MarkdownIt,
-
     xhtml_out: bool,
 }
 
@@ -20,12 +19,12 @@ impl MarkdownIt {
                 let mut parser = markdown_it::MarkdownIt::new();
                 markdown_it::plugins::cmark::add(&mut parser);
                 markdown_it::plugins::html::add(&mut parser);
-                Ok(MarkdownIt {
+                Ok(Self {
                     parser,
                     xhtml_out: true,
                 })
             }
-            "zero" => Ok(MarkdownIt {
+            "zero" => Ok(Self {
                 parser: markdown_it::MarkdownIt::new(),
                 xhtml_out: false,
             }),
@@ -34,6 +33,11 @@ impl MarkdownIt {
                 config
             ))),
         }
+    }
+
+    // keep this private for now, whilst we work out how to expose it properly
+    fn _unset_lang_prefix(&mut self) {
+        markdown_it::plugins::cmark::block::fence::set_lang_prefix(&mut self.parser, "");
     }
 
     /// Enable a plugin
