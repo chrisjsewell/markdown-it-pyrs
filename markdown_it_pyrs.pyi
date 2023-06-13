@@ -1,4 +1,4 @@
-from typing import Any, Iterable, Literal, Mapping, Optional, Sequence, Tuple
+from typing import Any, Iterable, List, Literal, Mapping, Optional, Sequence, Tuple
 
 __version__: str
 
@@ -62,6 +62,33 @@ class Node:
         :param indent_current: number of spaces to indent the current level
         """
 
+_PLUGIN_NAME = Literal[
+    "blockquote",
+    "code",
+    "fence",
+    "heading",
+    "hr",
+    "lheading",
+    "list",
+    "paragraph",
+    "reference",
+    "autolink",
+    "backticks",
+    "emphasis",
+    "entity",
+    "escape",
+    "image",
+    "link",
+    "newline",
+    "html_block",
+    "html_inline",
+    "linkify",
+    "replacements",
+    "smartquotes",
+    "strikethrough",
+    "table",
+]
+
 class MarkdownIt:
     """Markdown parser class."""
 
@@ -72,36 +99,19 @@ class MarkdownIt:
         """
     def enable(
         self,
-        name: Literal[
-            "blockquote",
-            "code",
-            "fence",
-            "heading",
-            "hr",
-            "lheading",
-            "list",
-            "paragraph",
-            "reference",
-            "autolink",
-            "backticks",
-            "emphasis",
-            "entity",
-            "escape",
-            "image",
-            "link",
-            "newline",
-            "html_block",
-            "html_inline",
-            "linkify",
-            "replacements",
-            "smartquotes",
-            "strikethrough",
-            "table",
-        ],
+        name: _PLUGIN_NAME,
     ) -> "MarkdownIt":
-        """Enable a rule.
+        """Enable a plugin rule.
 
-        :param name: Rule name.
+        :param name: Plugin name.
+        """
+    def enable_many(
+        self,
+        names: List[_PLUGIN_NAME],
+    ) -> "MarkdownIt":
+        """Enable multiple plugin rules.
+
+        :param names: Plugin names.
         """
     def render(self, src: str) -> str:
         """Render Markdown to HTML.

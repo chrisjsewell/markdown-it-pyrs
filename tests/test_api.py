@@ -2,10 +2,18 @@ from markdown_it_pyrs import MarkdownIt, Node
 import pytest
 
 
-def test_enable_unknown() -> None:
+def test_enable() -> None:
     mdit = MarkdownIt()
+    with pytest.raises(TypeError):
+        mdit.enable(1)  # type: ignore[arg-type]
     with pytest.raises(ValueError):
-        mdit.enable("unknown")  # type: ignore
+        mdit.enable("unknown")  # type: ignore[arg-type]
+    mdit.enable("heading")
+    with pytest.raises(ValueError):
+        mdit.enable_many(["heading", "unknown"])  # type: ignore[list-item]
+    with pytest.raises(TypeError):
+        mdit.enable_many(1)  # type: ignore[arg-type]
+    mdit.enable_many(["heading", "code"])
 
 
 def test_zero() -> None:

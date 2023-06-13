@@ -43,7 +43,11 @@ This is similar to the `markdown-it-py`'s `SyntaxTreeNode` class, although the A
 (source mapping is also provided by byte-offset, rather than line only)
 
 ```python
-md = MarkdownIt("commonmark").enable("table")
+md = (
+  MarkdownIt("commonmark")
+  .enable("table")
+  .enable_many(["linkify", "strikethrough"])
+)
 node = md.tree("# Hello, world!")
 print(node.walk())
 # [Node(root), Node(heading), Node(text)]

@@ -9,6 +9,94 @@ struct MarkdownIt {
     xhtml_out: bool,
 }
 
+impl MarkdownIt {
+    fn _enable(&mut self, name: &str) -> Result<(), PyErr> {
+        match name {
+            "blockquote" => {
+                markdown_it::plugins::cmark::block::blockquote::add(&mut self.parser);
+            }
+            "code" => {
+                markdown_it::plugins::cmark::block::code::add(&mut self.parser);
+            }
+            "fence" => {
+                markdown_it::plugins::cmark::block::fence::add(&mut self.parser);
+            }
+            "heading" => {
+                markdown_it::plugins::cmark::block::heading::add(&mut self.parser);
+            }
+            "hr" => {
+                markdown_it::plugins::cmark::block::hr::add(&mut self.parser);
+            }
+            "lheading" => {
+                markdown_it::plugins::cmark::block::lheading::add(&mut self.parser);
+            }
+            "list" => {
+                markdown_it::plugins::cmark::block::list::add(&mut self.parser);
+            }
+            "paragraph" => {
+                markdown_it::plugins::cmark::block::paragraph::add(&mut self.parser);
+            }
+            "reference" => {
+                markdown_it::plugins::cmark::block::reference::add(&mut self.parser);
+            }
+            "autolink" => {
+                markdown_it::plugins::cmark::inline::autolink::add(&mut self.parser);
+            }
+            "backticks" => {
+                markdown_it::plugins::cmark::inline::backticks::add(&mut self.parser);
+            }
+            "emphasis" => {
+                markdown_it::plugins::cmark::inline::emphasis::add(&mut self.parser);
+            }
+            "entity" => {
+                markdown_it::plugins::cmark::inline::entity::add(&mut self.parser);
+            }
+            "escape" => {
+                markdown_it::plugins::cmark::inline::escape::add(&mut self.parser);
+            }
+            "image" => {
+                markdown_it::plugins::cmark::inline::image::add(&mut self.parser);
+            }
+            "link" => {
+                markdown_it::plugins::cmark::inline::link::add(&mut self.parser);
+            }
+            "newline" => {
+                markdown_it::plugins::cmark::inline::newline::add(&mut self.parser);
+            }
+            "html_block" => {
+                markdown_it::plugins::html::html_block::add(&mut self.parser);
+            }
+            "html_inline" => {
+                markdown_it::plugins::html::html_inline::add(&mut self.parser);
+            }
+            "linkify" => {
+                markdown_it::plugins::extra::linkify::add(&mut self.parser);
+            }
+            "replacements" => {
+                markdown_it::plugins::extra::typographer::add(&mut self.parser);
+            }
+            "smartquotes" => {
+                markdown_it::plugins::extra::smartquotes::add(&mut self.parser);
+            }
+            "strikethrough" => {
+                markdown_it::plugins::extra::strikethrough::add(&mut self.parser);
+            }
+            "table" => {
+                markdown_it::plugins::extra::tables::add(&mut self.parser);
+            }
+            _ => {
+                return {
+                    Err(pyo3::exceptions::PyValueError::new_err(format!(
+                        "Unknown plugin: {}",
+                        name
+                    )))
+                }
+            }
+        }
+        Ok(())
+    }
+}
+
 #[pymethods]
 impl MarkdownIt {
     #[new]
@@ -42,88 +130,14 @@ impl MarkdownIt {
 
     /// Enable a plugin
     fn enable(slf: Py<Self>, py: Python, name: &str) -> PyResult<Py<Self>> {
-        {
-            let mut slf_mut = slf.borrow_mut(py);
-            match name {
-                "blockquote" => {
-                    markdown_it::plugins::cmark::block::blockquote::add(&mut slf_mut.parser);
-                }
-                "code" => {
-                    markdown_it::plugins::cmark::block::code::add(&mut slf_mut.parser);
-                }
-                "fence" => {
-                    markdown_it::plugins::cmark::block::fence::add(&mut slf_mut.parser);
-                }
-                "heading" => {
-                    markdown_it::plugins::cmark::block::heading::add(&mut slf_mut.parser);
-                }
-                "hr" => {
-                    markdown_it::plugins::cmark::block::hr::add(&mut slf_mut.parser);
-                }
-                "lheading" => {
-                    markdown_it::plugins::cmark::block::lheading::add(&mut slf_mut.parser);
-                }
-                "list" => {
-                    markdown_it::plugins::cmark::block::list::add(&mut slf_mut.parser);
-                }
-                "paragraph" => {
-                    markdown_it::plugins::cmark::block::paragraph::add(&mut slf_mut.parser);
-                }
-                "reference" => {
-                    markdown_it::plugins::cmark::block::reference::add(&mut slf_mut.parser);
-                }
-                "autolink" => {
-                    markdown_it::plugins::cmark::inline::autolink::add(&mut slf_mut.parser);
-                }
-                "backticks" => {
-                    markdown_it::plugins::cmark::inline::backticks::add(&mut slf_mut.parser);
-                }
-                "emphasis" => {
-                    markdown_it::plugins::cmark::inline::emphasis::add(&mut slf_mut.parser);
-                }
-                "entity" => {
-                    markdown_it::plugins::cmark::inline::entity::add(&mut slf_mut.parser);
-                }
-                "escape" => {
-                    markdown_it::plugins::cmark::inline::escape::add(&mut slf_mut.parser);
-                }
-                "image" => {
-                    markdown_it::plugins::cmark::inline::image::add(&mut slf_mut.parser);
-                }
-                "link" => {
-                    markdown_it::plugins::cmark::inline::link::add(&mut slf_mut.parser);
-                }
-                "newline" => {
-                    markdown_it::plugins::cmark::inline::newline::add(&mut slf_mut.parser);
-                }
-                "html_block" => {
-                    markdown_it::plugins::html::html_block::add(&mut slf_mut.parser);
-                }
-                "html_inline" => {
-                    markdown_it::plugins::html::html_inline::add(&mut slf_mut.parser);
-                }
-                "linkify" => {
-                    markdown_it::plugins::extra::linkify::add(&mut slf_mut.parser);
-                }
-                "replacements" => {
-                    markdown_it::plugins::extra::typographer::add(&mut slf_mut.parser);
-                }
-                "smartquotes" => {
-                    markdown_it::plugins::extra::smartquotes::add(&mut slf_mut.parser);
-                }
-                "strikethrough" => {
-                    markdown_it::plugins::extra::strikethrough::add(&mut slf_mut.parser);
-                }
-                "table" => {
-                    markdown_it::plugins::extra::tables::add(&mut slf_mut.parser);
-                }
-                _ => {
-                    return Err(pyo3::exceptions::PyValueError::new_err(format!(
-                        "Unknown rule: {}",
-                        name
-                    )))
-                }
-            }
+        slf.borrow_mut(py)._enable(name)?;
+        Ok(slf)
+    }
+
+    /// Enable multiple plugins
+    fn enable_many(slf: Py<Self>, py: Python, names: Vec<&str>) -> PyResult<Py<Self>> {
+        for name in names {
+            slf.borrow_mut(py)._enable(name)?;
         }
         Ok(slf)
     }
