@@ -1,47 +1,55 @@
-from typing import Any, Dict, List, Literal, Optional, Tuple
+from typing import Any, Iterable, Literal, Mapping, Optional, Sequence, Tuple
 
 __version__: str
 
 class Node:
     """Single node in the Markdown AST tree."""
 
-    module: str
+    _rust_path: Optional[str]
     """The rust module path of the node type"""
 
     name: str
     """The name of the node type"""
 
-    children: List["Node"]
+    children: Sequence["Node"]
     """The children of the node"""
 
     srcmap: Optional[Tuple[int, int]]
     """Byte offset mapping of the (start, end) of the source syntax."""
 
-    attrs: Dict[str, str]
+    attrs: Mapping[str, str]
     """Additional attributes to be added to resulting html."""
 
-    meta: Dict[str, Any]
+    meta: Mapping[str, Any]
     """Custom data specific to the node type."""
 
-    def __init__(self, path: str) -> None:
+    def __init__(self, name: str) -> None:
         """Initialize a Node instance.
 
-        :param path: The rust module path of the node type.
+        :param name: The type of the node.
         """
     def __repr__(self) -> str:
         """Return a string representation of the node."""
     def __str__(self) -> str:
         """Return a string representation of the node."""
+    def walk(self, *, include_self: bool = True) -> Iterable["Node"]:
+        """Recursively yield all descendant nodes in the tree.
+
+        The order mimics the order of the underlying linear token
+        stream (i.e. depth first).
+
+        :param include_self: whether to include self in the output
+        """
     def pretty(
         self,
         *,
-        attrs=False,
-        srcmap=False,
-        content=False,
-        meta=False,
-        recurse=True,
-        indent=2,
-        indent_current=0,
+        attrs: bool = False,
+        srcmap: bool = False,
+        content: bool = False,
+        meta: bool = False,
+        recurse: bool = True,
+        indent: int = 2,
+        indent_current: int = 0,
     ) -> str:
         """Return a pretty string representation of the node.
 

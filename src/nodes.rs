@@ -5,8 +5,8 @@ use std::collections::HashMap;
 /// Single node in the Markdown AST tree.
 pub struct Node {
     #[pyo3(get)]
-    /// The rust module path of the node type
-    pub module: String,
+    /// The absolute path to the rust Node implementation.
+    pub _rust_path: Option<String>,
 
     #[pyo3(get)]
     /// The type of the node
@@ -30,13 +30,26 @@ pub struct Node {
     pub meta: HashMap<String, PyObject>,
 }
 
+impl Node {
+    fn _walk(&self, py: Python) -> Vec<Py<Node>> {
+        let mut nodes: Vec<Py<Node>> = Vec::new();
+        for child in self.children.iter() {
+            nodes.push(child.clone_ref(py));
+            for node in child.borrow(py)._walk(py) {
+                nodes.push(node);
+            }
+        }
+        nodes
+    }
+}
+
 #[pymethods]
 impl Node {
     #[new]
-    pub fn new(path: &str) -> Self {
+    pub fn new(name: &str) -> Self {
         Self {
-            module: path.to_string(),
-            name: "unknown".to_string(),
+            _rust_path: None,
+            name: name.to_string(),
             children: Vec::new(),
             srcmap: None,
             attrs: HashMap::new(),
@@ -48,6 +61,20 @@ impl Node {
     }
     fn __str__(&self) -> String {
         self.__repr__()
+    }
+
+    /// Recursively yield all descendant nodes in the tree starting at self.
+    ///
+    /// The order mimics the order of the underlying linear token
+    /// stream (i.e. depth first).
+    #[pyo3(signature = (*, include_self=true))]
+    fn walk(slf: Py<Self>, py: Python, include_self: bool) -> Vec<Py<Node>> {
+        let mut nodes: Vec<Py<Node>> = Vec::new();
+        if include_self {
+            nodes.push(slf.clone_ref(py));
+        }
+        nodes.extend(slf.borrow(py)._walk(py));
+        nodes
     }
 
     /// create a pretty string representation of the node
@@ -126,10 +153,11 @@ impl Node {
     }
 }
 
-// Take a markdown_it::Node and return a Python compatible Node
+/// Take a markdown_it::Node and return a Python compatible Node
 pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
     // default to a node with the same name as the markdown_it::Node
-    let mut py_node = Node::new(node.name());
+    let mut py_node = Node::new("unknown");
+    py_node._rust_path = Some(node.name().to_string());
 
     // aspects that are common to all nodes
     for (key, value) in node.attrs.iter() {

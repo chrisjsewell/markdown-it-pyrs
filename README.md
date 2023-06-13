@@ -44,10 +44,10 @@ This is similar to the `markdown-it-py`'s `SyntaxTreeNode` class, although the A
 
 ```python
 md = MarkdownIt("commonmark").enable("table")
-print(
-    md.tree("# Hello, world!")
-      .pretty(srcmap=True, meta=True)
-)
+node = md.tree("# Hello, world!")
+print(node.walk())
+# [Node(root), Node(heading), Node(text)]
+print(node.pretty(srcmap=True, meta=True))
 # <root srcmap="0:15">
 #   <heading srcmap="0:15">
 #     level: 1
