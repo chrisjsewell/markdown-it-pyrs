@@ -17,7 +17,7 @@ markdown-it-py   | 122.696 | 143.246 | 131.431 | 7
 
 The drawback is that the library vendors compiled Rust code, and so:
 
-1. Parser plugins cannot be written in Python and added dynamically to the parser.
+1. Parser plugins cannot currently be written in Python and added dynamically to the parser.
 2. It can be more difficult to integrate into environments like [pyiodide](https://pyodide.org) and py-script (but maybe not for long: <https://discuss.python.org/t/support-wasm-wheels-on-pypi/21924/3>).
 
 ## Usage
@@ -53,6 +53,24 @@ print(node.pretty(srcmap=True, meta=True))
 #     level: 1
 #     <text srcmap="2:15">
 #       content: Hello, world!
+```
+
+**Note:** Attributes of the `Node` class, such as `Node.attrs`, return a **copy** of the underlying data, and so mutating it will not affect what is stored on the node, e.g.
+
+```python
+from markdown_it_pyrs import Node
+node = Node("name")
+# don't do this!
+node.attrs["key"] = "value"
+print(node.attrs) # {}
+# do this instead (Python 3.9+)
+node.attrs = node.attrs | {"key": "value"}
+print(node.attrs) # {"key": "value"}
+# Node.children is only a shallow copy though, so this is fine
+child = Node("child")
+node.children = [child]
+node.children[0].name = "other"
+print(child.name) # "other"
 ```
 
 ## Development

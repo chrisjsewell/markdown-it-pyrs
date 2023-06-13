@@ -4,28 +4,28 @@ use std::collections::HashMap;
 #[pyclass]
 /// Single node in the Markdown AST tree.
 pub struct Node {
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     /// The absolute path to the rust Node implementation.
     pub _rust_path: Option<String>,
 
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     /// The type of the node
     pub name: String,
 
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     /// Array of child nodes.
     // See https://github.com/PyO3/pyo3/discussions/3223#discussioncomment-6144333
     pub children: Vec<Py<Node>>,
 
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     /// Byte offset mapping of the (start, end) of the source syntax.
     pub srcmap: Option<(usize, usize)>,
 
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     /// Additional attributes to be added to resulting html.
     pub attrs: HashMap<String, String>,
 
-    #[pyo3(get)]
+    #[pyo3(get, set)]
     /// Custom data specific to the node type.
     pub meta: HashMap<String, PyObject>,
 }

@@ -18,13 +18,22 @@ def test_zero_header() -> None:
     assert mdit.render("# markdown-it rulezz!") == "<h1>markdown-it rulezz!</h1>\n"
 
 
-def test_node_init() -> None:
+def test_node() -> None:
     node = Node("root")
     assert node.name == "root"
     assert node.children == []
     assert node.srcmap is None
     assert node.attrs == {}
     assert node.meta == {}
+
+    node.attrs = {"foo": "bar"}
+    assert node.attrs == {"foo": "bar"}
+
+    child = Node("child")
+    node.children = [child]
+    assert node.children == [child]
+    node.children[0].name = "other"
+    assert child.name == "other"
 
 
 def test_tree_walk() -> None:
