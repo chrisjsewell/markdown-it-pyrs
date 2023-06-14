@@ -87,6 +87,7 @@ _PLUGIN_NAME = Literal[
     "smartquotes",
     "strikethrough",
     "table",
+    "front_matter",
 ]
 
 class MarkdownIt:

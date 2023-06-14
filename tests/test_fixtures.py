@@ -72,3 +72,9 @@ def test_normalize_url(file_params):
 def test_strikethrough(file_params):
     md = MarkdownIt().enable("strikethrough")
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("front_matter.md"))
+def test_front_matter(file_params):
+    md = MarkdownIt().enable("front_matter")
+    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)

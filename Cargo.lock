@@ -291,10 +291,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "markdown-it-front-matter"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "641cab345ed3726a726a81ba6bba06278cc21a8c1d89f8301d92b0d326221fc3"
+dependencies = [
+ "markdown-it",
+]
+
+[[package]]
 name = "markdown_it_pyrs"
 version = "0.1.0"
 dependencies = [
  "markdown-it",
+ "markdown-it-front-matter",
  "pyo3",
  "stacker",
 ]

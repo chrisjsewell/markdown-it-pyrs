@@ -84,6 +84,9 @@ impl MarkdownIt {
             "table" => {
                 markdown_it::plugins::extra::tables::add(&mut self.parser);
             }
+            "front_matter" => {
+                markdown_it_front_matter::add(&mut self.parser);
+            }
             _ => {
                 return {
                     Err(pyo3::exceptions::PyValueError::new_err(format!(

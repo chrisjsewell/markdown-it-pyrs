@@ -19,6 +19,13 @@ permissions:
 
 jobs:
 
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+    - uses: pre-commit/action@v3.0.0
+
   test-python:
 
     runs-on: ubuntu-latest
@@ -183,7 +190,7 @@ jobs:
   # https://github.com/marketplace/actions/alls-green#why used for branch protection checks
   check:
     if: always()
-    needs: [test-python, linux, windows, macos, sdist]
+    needs: [pre-commit, test-python, linux, windows, macos, sdist]
     runs-on: ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
@@ -195,7 +202,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [test-python, linux, windows, macos, sdist]
+    needs: [pre-commit, test-python, linux, windows, macos, sdist]
     steps:
       - uses: actions/download-artifact@v3
         with:

@@ -395,6 +395,12 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
         py_node.name = "tcell".to_string();
     } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableHead>() {
         py_node.name = "thead".to_string();
+    } else if let Some(node_value) = node.cast::<markdown_it_front_matter::FrontMatter>() {
+        py_node.name = "front_matter".to_string();
+        py_node.meta.insert(
+            "content".to_string(),
+            node_value.content.to_string().into_py(py),
+        );
     }
 
     py_node

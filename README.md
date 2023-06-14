@@ -77,6 +77,49 @@ node.children[0].name = "other"
 print(child.name) # "other"
 ```
 
+## Plugins
+
+All syntax rules in `markdown-it.rs` are implemented as plugins.
+Plugins can be added to the parser by calling `enable` or `enable_many` with the name of the plugin.
+The following plugins are currently supported:
+
+CommonMark Blocks:
+
+- `blockquote`: Block quotes with `>`
+- `code`: Indented code blocks
+- `fence`: Backtick code blocks
+- `heading`: `#` ATX headings
+- `hr`: `---` horizontal rules
+- `lheading`: `---` underline setext headings
+- `list`: `*` unordered lists and `1.` ordered lists
+- `paragraph`: Paragraphs
+- `reference`: Link reference definitions `[id]: src "title"`
+
+CommonMark Inlines:
+
+- `autolink`: `<http://example.com>`
+- `backticks`: `` `code` ``
+- `emphasis`: `_emphasis_`, `*emphasis*`, `**strong**`, `__strong__`
+- `entity`: `&amp;`
+- `escape`: backslash escaping `\`
+- `image`: `![alt](src "title")`
+- `link`: `[text](src "title")`, `[text][id]`, `[text]`
+- `newline`: hard line breaks
+- `html_block`: HTML blocks
+- `html_inline`: HTML inline
+
+Extras:
+
+- `linkify`: Automatically linkify URLs
+- `replacements`: Typographic replacements, like `--` to `—`
+- `smartquotes`: Smart quotes, like `"` to `“`
+- `strikethrough`: `~~strikethrough~~`
+- `table`: GitHub-style tables
+- `front_matter`: YAML front matter
+
+Initialising `MarkdownIt("zero")` will not enable any plugins, and so you can add only the ones you need,
+or use `MarkdownIt("commonmark")` to enable all the CommonMark plugins.
+
 ## Development
 
 I'm quite new to Rust, so if you see something that could be improved, please open an issue or PR!
@@ -109,5 +152,7 @@ Open issue upstream:
 - differing behaviour of linkify and normalize_url/commonmark_extras test failures
 - quote characters for smart-quotes and lang_prefix for fence
   should both be variable at run-time? (currently they both must be compiled)
+- fix docstring in `examples/ferris/block_rule.rs::FerrisBlockScanner::run`,
+  which currently describes the JS API not the new rust one
 
 Maintenance:
