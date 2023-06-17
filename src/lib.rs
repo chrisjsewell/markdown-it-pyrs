@@ -153,10 +153,10 @@ impl MarkdownIt {
         let ast = self.parser.parse(src);
         match self.xhtml_out {
             true => {
-                return ast.xrender();
+                ast.xrender()
             }
             false => {
-                return ast.render();
+                ast.render()
             }
         }
     }
@@ -165,9 +165,9 @@ impl MarkdownIt {
     fn tree(&self, py: Python, src: &str) -> nodes::Node {
         let ast = self.parser.parse(src);
 
-        fn walk_recursive<'a>(py: Python, node: &'a markdown_it::Node, py_node: &mut nodes::Node) {
+        fn walk_recursive(py: Python, node: &markdown_it::Node, py_node: &mut nodes::Node) {
             for n in node.children.iter() {
-                let mut py_node_child = nodes::create_node(py, &n);
+                let mut py_node_child = nodes::create_node(py, n);
 
                 stacker::maybe_grow(64 * 1024, 1024 * 1024, || {
                     walk_recursive(py, n, &mut py_node_child);

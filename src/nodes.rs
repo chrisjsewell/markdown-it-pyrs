@@ -87,6 +87,7 @@ impl Node {
     /// :param indent: number of spaces to increase indent for each level
     /// :param indent_current: number of spaces to indent the current level
     #[pyo3(signature = (*, attrs=false, srcmap=false, content=false, meta=false, recurse=true, indent=2, indent_current=0))]
+    #[allow(clippy::too_many_arguments)]
     fn pretty(
         &self,
         attrs: bool,
@@ -113,7 +114,7 @@ impl Node {
             for (key, value) in self.meta.iter() {
                 let mut meta_value = format!("{}", value);
                 meta_value =
-                    meta_value.replace("\n", &format!("\n{}", " ".repeat(indent_current + indent)));
+                    meta_value.replace('\n', &format!("\n{}", " ".repeat(indent_current + indent)));
                 s.push_str(&format!(
                     "{}{}: {}\n",
                     " ".repeat(indent_current + indent),
@@ -126,7 +127,7 @@ impl Node {
             if let Some(value) = self.meta.get("content") {
                 let mut content_value = format!("{}", value);
                 content_value = content_value
-                    .replace("\n", &format!("\n{}", " ".repeat(indent_current + indent)));
+                    .replace('\n', &format!("\n{}", " ".repeat(indent_current + indent)));
                 s.push_str(&format!(
                     "{}{}\n",
                     " ".repeat(indent_current + indent),
@@ -167,7 +168,7 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
         py_node.srcmap = Some(srcmap.get_byte_offsets());
     }
 
-    if let Some(_) = node.cast::<markdown_it::parser::core::Root>() {
+    if node.cast::<markdown_it::parser::core::Root>().is_some() {
         py_node.name = "root".to_string();
     } else if let Some(node_value) = node.cast::<markdown_it::parser::inline::Text>() {
         py_node.name = "text".to_string();
@@ -188,8 +189,9 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
         py_node
             .meta
             .insert("info".to_string(), node_value.info.into_py(py));
-    } else if let Some(_) =
-        node.cast::<markdown_it::plugins::cmark::block::blockquote::Blockquote>()
+    } else if node
+        .cast::<markdown_it::plugins::cmark::block::blockquote::Blockquote>()
+        .is_some()
     {
         py_node.name = "blockquote".to_string();
     } else if let Some(node_value) =
@@ -265,9 +267,14 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
         py_node
             .meta
             .insert("marker".to_string(), node_value.marker.into_py(py));
-    } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::block::list::ListItem>() {
+    } else if node
+        .cast::<markdown_it::plugins::cmark::block::list::ListItem>()
+        .is_some()
+    {
         py_node.name = "list_item".to_string();
-    } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::block::paragraph::Paragraph>()
+    } else if node
+        .cast::<markdown_it::plugins::cmark::block::paragraph::Paragraph>()
+        .is_some()
     {
         py_node.name = "paragraph".to_string();
     } else if let Some(node_value) =
@@ -330,9 +337,15 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
             }
             None => {}
         }
-    } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::inline::newline::Hardbreak>() {
+    } else if node
+        .cast::<markdown_it::plugins::cmark::inline::newline::Hardbreak>()
+        .is_some()
+    {
         py_node.name = "hardbreak".to_string();
-    } else if let Some(_) = node.cast::<markdown_it::plugins::cmark::inline::newline::Softbreak>() {
+    } else if node
+        .cast::<markdown_it::plugins::cmark::inline::newline::Softbreak>()
+        .is_some()
+    {
         py_node.name = "softbreak".to_string();
     } else if let Some(node_value) =
         node.cast::<markdown_it::plugins::html::html_inline::HtmlInline>()
@@ -387,13 +400,25 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
                 .collect::<Vec<String>>()
                 .into_py(py),
         );
-    } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableBody>() {
+    } else if node
+        .cast::<markdown_it::plugins::extra::tables::TableBody>()
+        .is_some()
+    {
         py_node.name = "tbody".to_string();
-    } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableRow>() {
+    } else if node
+        .cast::<markdown_it::plugins::extra::tables::TableRow>()
+        .is_some()
+    {
         py_node.name = "trow".to_string();
-    } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableCell>() {
+    } else if node
+        .cast::<markdown_it::plugins::extra::tables::TableCell>()
+        .is_some()
+    {
         py_node.name = "tcell".to_string();
-    } else if let Some(_) = node.cast::<markdown_it::plugins::extra::tables::TableHead>() {
+    } else if node
+        .cast::<markdown_it::plugins::extra::tables::TableHead>()
+        .is_some()
+    {
         py_node.name = "thead".to_string();
     } else if let Some(node_value) = node.cast::<markdown_it_front_matter::FrontMatter>() {
         py_node.name = "front_matter".to_string();
