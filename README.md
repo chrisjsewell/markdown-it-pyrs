@@ -2,7 +2,7 @@
 
 **Currently in Beta, feedback welcome!**
 
-A Python interface for [markdown-it.rs](https://github.com/rlidwka/markdown-it.rs), using Rust for blazingly fast Markdown parsing ⚡️
+A Python interface for [markdown-it.rs](https://github.com/rlidwka/markdown-it.rs) (and [plugins](https://github.com/chrisjsewell/markdown-it-plugins.rs)), using Rust for blazingly fast Markdown parsing ⚡️
 
 The goal of this project is to provide a fast, safe, extensible, and easy-to-use Markdown parser for Python.
 It is complimentary to [markdown-it-py](https://github.com/ExecutableBookProject/markdown-it-py), which is a pure Python implementation of markdown-it, and here we aim to follow as close as possible the API for that package.
@@ -113,8 +113,9 @@ Extras:
 - `linkify`: Automatically linkify URLs
 - `replacements`: Typographic replacements, like `--` to `—`
 - `smartquotes`: Smart quotes, like `"` to `“`
+- `sourcepos`: Add source mapping to rendered HTML, looks like this: `<stuff data-sourcepos="1:1-2:3">`, i.e. `line:col-line:col`
 - `strikethrough`: `~~strikethrough~~`
-- `table`: GitHub-style tables
+- `table`: [GitHub-style tables](https://github.github.com/gfm/#tables-extension-)
 - `front_matter`: YAML front matter
 
 Initialising `MarkdownIt("zero")` will not enable any plugins, and so you can add only the ones you need,
@@ -140,7 +141,10 @@ Improvements:
   - quotes: Quote characters, for smart quotes
 
 - Add plugins (and way to initialise them):
-  - footnotes
+  - heading anchors (with option for slug format)
+  - footnotes (with options to turn on/off inline/collect/backrefs)
+
+- Add `gfm` (Github Flavoured Markdown) initialisation mode (once all necessary plugins have been added)
 
 Open issue upstream:
 
@@ -154,5 +158,11 @@ Open issue upstream:
   should both be variable at run-time? (currently they both must be compiled)
 - fix docstring in `examples/ferris/block_rule.rs::FerrisBlockScanner::run`,
   which currently describes the JS API not the new rust one
+- Capture "piece-wise" source maps for nested content, e.g. for when the source is split over multiple lines and nested in another block (could get inline here <https://github.com/rlidwka/markdown-it.rs/blob/6f906b38c8ffc3cc651e67b448b3655b7d0debb3/src/parser/inline/mod.rs#L115>)
+- easier way to get `root.ext` items in core rules; it seems at present you have to swap memory and reswap at the end of the rule, see e.g. the `InlineParserRule`
+- allow `test_rules_at_line` to parse what the calling rule is, so that other rules can decide whether to interrupt based on the calling rule (in the `check` function), I think this would then allow behaviour similar to what `alt` did (possibly needed for footnote definition parsing)
+  - In general though, where back-compatibility is not required, I agree with [djot](https://github.com/jgm/djot) goal 7, i.e. that block elements should not be allowed to interrupt other block elements without a newline
+- The possibility to return multiple (sequential) nodes from an `InlineRule.run`, e.g. `((node1, length1), (node2, length2), ...)`
+  - This would be similar to docutils
 
 Maintenance:

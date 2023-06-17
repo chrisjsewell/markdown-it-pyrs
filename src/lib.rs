@@ -78,6 +78,9 @@ impl MarkdownIt {
             "smartquotes" => {
                 markdown_it::plugins::extra::smartquotes::add(&mut self.parser);
             }
+            "sourcepos" => {
+                markdown_it::plugins::sourcepos::add(&mut self.parser);
+            }
             "strikethrough" => {
                 markdown_it::plugins::extra::strikethrough::add(&mut self.parser);
             }

@@ -11,6 +11,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 markdown-it = "0.5.0"
-markdown-it-front-matter = "0.1.0"
+markdown-it-footnote = "0.1.0"
+markdown-it-front-matter = "0.2.0"
 pyo3 = "0.19.0"
 stacker = "0.1.15"

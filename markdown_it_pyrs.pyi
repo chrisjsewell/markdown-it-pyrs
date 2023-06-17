@@ -85,6 +85,7 @@ _PLUGIN_NAME = Literal[
     "linkify",
     "replacements",
     "smartquotes",
+    "sourcepos",
     "strikethrough",
     "table",
     "front_matter",

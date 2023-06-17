@@ -78,3 +78,9 @@ def test_strikethrough(file_params):
 def test_front_matter(file_params):
     md = MarkdownIt().enable("front_matter")
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("sourcepos.md"))
+def test_sourcepos(file_params):
+    md = MarkdownIt().enable("sourcepos")
+    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
