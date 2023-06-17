@@ -152,12 +152,8 @@ impl MarkdownIt {
     fn render(&self, src: &str) -> String {
         let ast = self.parser.parse(src);
         match self.xhtml_out {
-            true => {
-                ast.xrender()
-            }
-            false => {
-                ast.render()
-            }
+            true => ast.xrender(),
+            false => ast.render(),
         }
     }
 

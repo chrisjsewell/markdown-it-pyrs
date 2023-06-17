@@ -9,11 +9,15 @@ repos:
     - id: check-yaml
     - id: check-added-large-files
 
-  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-    rev: v2.9.0
+  - repo: local
     hooks:
-    - id: pretty-format-rust
-      args: [--autofix]
+    - id: cargo-fmt
+      name: cargo-fmt
+      description: Format files with cargo fmt.
+      entry: cargo fmt
+      language: rust
+      types: [rust]
+      args: ["--"]
 
   - repo: https://github.com/pycqa/isort
     rev: 5.12.0
