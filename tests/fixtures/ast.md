@@ -83,3 +83,41 @@ tasklist
       <text srcmap="23:39">
         content:  checked item
 .
+
+footnote
+.
+[^a] ^[Iniline note]
+
+[^a]: Block note
+.
+<root srcmap="0:39">
+  <paragraph srcmap="0:20">
+    <footnote_ref srcmap="0:4">
+      def_id: 1
+      label: a
+      ref_id: 1
+    <text srcmap="4:5">
+      content:  
+    <footnote_inline srcmap="5:20">
+      <footnote_ref>
+        def_id: 2
+        ref_id: 2
+  <footnote_container>
+    <footnote_def srcmap="22:38">
+      def_id: 1
+      inline: False
+      label: a
+      <paragraph srcmap="28:38">
+        <text srcmap="28:38">
+          content: Block note
+        <footnote_ref_anchor>
+          ref_ids: [1]
+    <footnote_def>
+      def_id: 2
+      inline: True
+      <paragraph>
+        <text srcmap="7:19">
+          content: Iniline note
+        <footnote_ref_anchor>
+          ref_ids: [2]
+.

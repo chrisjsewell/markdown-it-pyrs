@@ -90,6 +90,7 @@ _PLUGIN_NAME = Literal[
     "table",
     "front_matter",
     "tasklist",
+    "footnote",
 ]
 
 class MarkdownIt:

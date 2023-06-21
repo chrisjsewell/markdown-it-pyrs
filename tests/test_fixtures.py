@@ -92,6 +92,12 @@ def test_tasklist(file_params):
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
 
 
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("footnote.md"))
+def test_footnote(file_params):
+    md = MarkdownIt().enable("footnote")
+    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("ast.md"))
 def test_ast(file_params):
     md = MarkdownIt().enable_many(
@@ -99,9 +105,9 @@ def test_ast(file_params):
             "front_matter",
             "strikethrough",
             "table",
-            "linkify",
-            # TODO tasklist does not work if linkify added after
             "tasklist",
+            "linkify",
+            "footnote",
         ]
     )
     assert file_params.assert_expected(

@@ -93,6 +93,9 @@ impl MarkdownIt {
             "tasklist" => {
                 markdown_it_tasklist::add(&mut self.parser);
             }
+            "footnote" => {
+                markdown_it_footnote::add(&mut self.parser);
+            }
             _ => {
                 return {
                     Err(pyo3::exceptions::PyValueError::new_err(format!(
@@ -121,6 +124,9 @@ impl MarkdownIt {
                     xhtml_out: true,
                 })
             }
+            "gfm" => {
+                let mut parser = markdown_it::MarkdownIt::new();
+                markdown_it::plugins::cmark::add(&mut parser);
                 markdown_it::plugins::html::add(&mut parser);
                 markdown_it::plugins::extra::tables::add(&mut parser);
                 markdown_it::plugins::extra::strikethrough::add(&mut parser);

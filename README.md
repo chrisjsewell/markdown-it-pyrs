@@ -131,10 +131,11 @@ GitHub Flavoured Markdown (<https://github.github.com/gfm>):
 
 Others:
 
+- `sourcepos`: Add source mapping to rendered HTML, looks like this: `<stuff data-sourcepos="1:1-2:3">`, i.e. `line:col-line:col`
 - `replacements`: Typographic replacements, like `--` to `—`
 - `smartquotes`: Smart quotes, like `"` to `“`
-- `sourcepos`: Add source mapping to rendered HTML, looks like this: `<stuff data-sourcepos="1:1-2:3">`, i.e. `line:col-line:col`
 - `front_matter`: YAML front matter
+- `footnote`: Pandoc-style footnotes (see <https://pandoc.org/MANUAL.html#footnotes>)
 
 ## Development
 
@@ -153,10 +154,12 @@ Improvements:
   - lang_prefix: Prefix for language classes on fenced code blocks
   - quotes: Quote characters, for smart quotes
 
-- Add plugins (and way to initialise them):
+- Add plugins:
   - heading anchors (with option for slug format)
-  - footnotes (with options to turn on/off inline/collect/backrefs)
-  - Allow tasklist checkboxes to be disabled
+
+- Allow options for plugins:
+  - tasklist checkboxes to be disabled
+  - footnotes with options to turn on/off inline/collect/backrefs
 
 - The `gfm` (Github Flavoured Markdown) initialisation mode needs improving
   - `linkify` is not strictly equivalent to <https://github.github.com/gfm/#autolinks-extension->, e.g. it does not currently autolink `www.example.com`
