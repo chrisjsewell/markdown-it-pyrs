@@ -143,6 +143,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ea835d29036a4087793836fa931b08837ad5e957da9e23886b29586fb9b6650"
 
 [[package]]
+name = "either"
+version = "1.8.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7fcaabb2fef8c910e7f4c7ce9f67a1283a1715879a7c230ca9d6d1ae31f16d91"
+
+[[package]]
 name = "entities"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -214,6 +220,15 @@ name = "indoc"
 version = "1.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfa799dd5ed20a7e349f3b4639aa80d74549c81716d9ec4f994c9b5815598306"
+
+[[package]]
+name = "itertools"
+version = "0.10.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b0fd2260e829bddf4cb6ea802289de2f86d6a7a690192fbe91b3f46e0f2c8473"
+dependencies = [
+ "either",
+]
 
 [[package]]
 name = "itoa"
@@ -309,12 +324,26 @@ dependencies = [
 ]
 
 [[package]]
+name = "markdown-it-tasklist"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbc32bfd3d39abf6f69083574f90ff726647ef28c69cc615d8274fb8114e0fa6"
+dependencies = [
+ "markdown-it",
+ "once_cell",
+ "regex",
+ "stacker",
+]
+
+[[package]]
 name = "markdown_it_pyrs"
 version = "0.1.0"
 dependencies = [
+ "itertools",
  "markdown-it",
  "markdown-it-footnote",
  "markdown-it-front-matter",
+ "markdown-it-tasklist",
  "pyo3",
  "stacker",
 ]

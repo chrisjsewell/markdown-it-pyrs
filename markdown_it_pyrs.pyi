@@ -89,12 +89,15 @@ _PLUGIN_NAME = Literal[
     "strikethrough",
     "table",
     "front_matter",
+    "tasklist",
 ]
 
 class MarkdownIt:
     """Markdown parser class."""
 
-    def __init__(self, config: Literal["commonmark", "zero"] = "commonmark") -> None:
+    def __init__(
+        self, config: Literal["commonmark", "gfm", "zero"] = "commonmark"
+    ) -> None:
         """Initialize a MarkdownIt instance.
 
         :param config: Configuration preset name.

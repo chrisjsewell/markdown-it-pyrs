@@ -1,3 +1,4 @@
+use itertools::Itertools;
 use pyo3::prelude::*;
 use std::collections::HashMap;
 
@@ -111,7 +112,7 @@ impl Node {
         }
         let mut s = format!("{}<{}>\n", " ".repeat(indent_current), inner);
         if meta {
-            for (key, value) in self.meta.iter() {
+            for (key, value) in self.meta.iter().sorted_by(|a, b| a.0.cmp(b.0)) {
                 let mut meta_value = format!("{}", value);
                 meta_value =
                     meta_value.replace('\n', &format!("\n{}", " ".repeat(indent_current + indent)));
@@ -426,6 +427,14 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
             "content".to_string(),
             node_value.content.to_string().into_py(py),
         );
+    } else if let Some(node_value) = node.cast::<markdown_it_tasklist::TodoCheckbox>() {
+        py_node.name = "todo_checkbox".to_string();
+        py_node
+            .meta
+            .insert("checked".to_string(), node_value.checked.into_py(py));
+        py_node
+            .meta
+            .insert("disabled".to_string(), node_value.disabled.into_py(py));
     }
 
     py_node

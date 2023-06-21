@@ -74,13 +74,37 @@ def test_strikethrough(file_params):
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
 
 
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("sourcepos.md"))
+def test_sourcepos(file_params):
+    md = MarkdownIt().enable("sourcepos")
+    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("front_matter.md"))
 def test_front_matter(file_params):
     md = MarkdownIt().enable("front_matter")
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
 
 
-@pytest.mark.param_file(FIXTURE_PATH.joinpath("sourcepos.md"))
-def test_sourcepos(file_params):
-    md = MarkdownIt().enable("sourcepos")
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("tasklists.md"))
+def test_tasklist(file_params):
+    md = MarkdownIt().enable("tasklist")
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("ast.md"))
+def test_ast(file_params):
+    md = MarkdownIt().enable_many(
+        [
+            "front_matter",
+            "strikethrough",
+            "table",
+            "linkify",
+            # TODO tasklist does not work if linkify added after
+            "tasklist",
+        ]
+    )
+    assert file_params.assert_expected(
+        md.tree(file_params.content).pretty(attrs=True, srcmap=True, meta=True),
+        rstrip=True,
+    )

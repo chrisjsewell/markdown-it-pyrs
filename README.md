@@ -77,6 +77,14 @@ node.children[0].name = "other"
 print(child.name) # "other"
 ```
 
+## Initial Configuration
+
+Initialising `MarkdownIt("zero")` will not enable any plugins, and so you can add only the ones you need.
+
+Use `MarkdownIt("commonmark")` to enable all the CommonMark plugins.
+
+Use `MarkdownIt("gfm")` to enable all the CommonMark plugins, plus the GitHub Flavoured Markdown plugins.
+
 ## Plugins
 
 All syntax rules in `markdown-it.rs` are implemented as plugins.
@@ -108,22 +116,29 @@ CommonMark Inlines:
 - `html_block`: HTML blocks
 - `html_inline`: HTML inline
 
-Extras:
+GitHub Flavoured Markdown (<https://github.github.com/gfm>):
 
+- `table`:
+
+  ```markdown
+  | foo | bar |
+  | --- | --- |
+  | baz | bim |
+  ```
 - `linkify`: Automatically linkify URLs
+- `strikethrough`: `~~strikethrough~~`
+- `tasklist`: `- [x] tasklist item`
+
+Others:
+
 - `replacements`: Typographic replacements, like `--` to `—`
 - `smartquotes`: Smart quotes, like `"` to `“`
 - `sourcepos`: Add source mapping to rendered HTML, looks like this: `<stuff data-sourcepos="1:1-2:3">`, i.e. `line:col-line:col`
-- `strikethrough`: `~~strikethrough~~`
-- `table`: [GitHub-style tables](https://github.github.com/gfm/#tables-extension-)
 - `front_matter`: YAML front matter
-
-Initialising `MarkdownIt("zero")` will not enable any plugins, and so you can add only the ones you need,
-or use `MarkdownIt("commonmark")` to enable all the CommonMark plugins.
 
 ## Development
 
-I'm quite new to Rust, so if you see something that could be improved, please open an issue or PR!
+I'm quite new to Rust, so if you see something that could be improved, issues and PRs are welcome!
 
 [PyO3](https://pyo3.rs) and [Maturin](https://www.maturin.rs) are used to build the Python package, by wrapping [markdown-it.rs](https://github.com/rlidwka/markdown-it.rs) in a Python module.
 
@@ -133,8 +148,6 @@ I'm quite new to Rust, so if you see something that could be improved, please op
 
 Improvements:
 
-- disable rules
-
 - Allow to override options:
   - xhtml_out: Use `"/"` to close single tags (e.g. `<br />`)
   - lang_prefix: Prefix for language classes on fenced code blocks
@@ -143,8 +156,17 @@ Improvements:
 - Add plugins (and way to initialise them):
   - heading anchors (with option for slug format)
   - footnotes (with options to turn on/off inline/collect/backrefs)
+  - Allow tasklist checkboxes to be disabled
 
-- Add `gfm` (Github Flavoured Markdown) initialisation mode (once all necessary plugins have been added)
+- The `gfm` (Github Flavoured Markdown) initialisation mode needs improving
+  - `linkify` is not strictly equivalent to <https://github.github.com/gfm/#autolinks-extension->, e.g. it does not currently autolink `www.example.com`
+  - Add <https://github.github.com/gfm/#disallowed-raw-html-extension->
+  - heading anchors, is not strictly in the spec, but should be noted
+  - Add more testing
+
+- disable rules
+
+- Add CLI
 
 Open issue upstream:
 
@@ -158,11 +180,18 @@ Open issue upstream:
   should both be variable at run-time? (currently they both must be compiled)
 - fix docstring in `examples/ferris/block_rule.rs::FerrisBlockScanner::run`,
   which currently describes the JS API not the new rust one
+- also some functions/methods use `//` not `///` for docstrings
 - Capture "piece-wise" source maps for nested content, e.g. for when the source is split over multiple lines and nested in another block (could get inline here <https://github.com/rlidwka/markdown-it.rs/blob/6f906b38c8ffc3cc651e67b448b3655b7d0debb3/src/parser/inline/mod.rs#L115>)
 - easier way to get `root.ext` items in core rules; it seems at present you have to swap memory and reswap at the end of the rule, see e.g. the `InlineParserRule`
 - allow `test_rules_at_line` to parse what the calling rule is, so that other rules can decide whether to interrupt based on the calling rule (in the `check` function), I think this would then allow behaviour similar to what `alt` did (possibly needed for footnote definition parsing)
   - In general though, where back-compatibility is not required, I agree with [djot](https://github.com/jgm/djot) goal 7, i.e. that block elements should not be allowed to interrupt other block elements without a newline
 - The possibility to return multiple (sequential) nodes from an `InlineRule.run`, e.g. `((node1, length1), (node2, length2), ...)`
   - This would be similar to docutils
+- In the `Node` walk methods, allow the function to return something to indicate whether to continue walking the children of the node
+  - Also in walk, parse the "path" to get to the current node, e.g. list of parent nodes, to allow for backtracing
+  - similar to <https://github.com/syntax-tree/unist-util-visit-parents>, <https://github.com/syntax-tree/unist-util-visit>, etc
+- is there a way to use a `match` statement, to match a Node against a `NodeValue` implementation? (rather than if/else for `Node.cast`)
+- Rule priority as an integer (similar to RST transform priority)
+  - Currently can only specify `before` or `after` another rule or all rules
 
 Maintenance:

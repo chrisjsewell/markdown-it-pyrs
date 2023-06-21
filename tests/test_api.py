@@ -26,6 +26,11 @@ def test_zero_header() -> None:
     assert mdit.render("# markdown-it rulezz!") == "<h1>markdown-it rulezz!</h1>\n"
 
 
+def test_gfm() -> None:
+    mdit = MarkdownIt("gfm")
+    assert mdit.render("# markdown-it rulezz!") == "<h1>markdown-it rulezz!</h1>\n"
+
+
 def test_node() -> None:
     node = Node("root")
     assert node.name == "root"
