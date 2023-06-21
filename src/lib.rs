@@ -4,7 +4,7 @@ mod nodes;
 
 /// Main parser class
 #[pyclass]
-struct MarkdownIt {
+pub struct MarkdownIt {
     parser: markdown_it::MarkdownIt,
     xhtml_out: bool,
 }
@@ -153,6 +153,43 @@ impl MarkdownIt {
         markdown_it::plugins::cmark::block::fence::set_lang_prefix(&mut self.parser, "");
     }
 
+    #[staticmethod]
+    fn list_plugins() -> Vec<String> {
+        vec![
+            "blockquote",
+            "code",
+            "fence",
+            "heading",
+            "hr",
+            "lheading",
+            "list",
+            "paragraph",
+            "reference",
+            "autolink",
+            "backticks",
+            "emphasis",
+            "entity",
+            "escape",
+            "image",
+            "link",
+            "newline",
+            "html_block",
+            "html_inline",
+            "linkify",
+            "replacements",
+            "smartquotes",
+            "sourcepos",
+            "strikethrough",
+            "table",
+            "front_matter",
+            "tasklist",
+            "footnote",
+        ]
+        .iter()
+        .map(|s| s.to_string())
+        .collect()
+    }
+
     /// Enable a plugin
     fn enable(slf: Py<Self>, py: Python, name: &str) -> PyResult<Py<Self>> {
         slf.borrow_mut(py)._enable(name)?;
@@ -207,5 +244,8 @@ fn markdown_it_pyrs(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add("__version__", env!("CARGO_PKG_VERSION"))?;
     m.add_class::<MarkdownIt>()?;
     m.add_class::<nodes::Node>()?;
+    // let plugins_module = PyModule::new(py, "plugins")?;
+    // plugins_module.add_function(wrap_pyfunction!(plugins::add_heading_anchors, plugins_module)?)?;
+    // m.add_submodule(plugins_module)?;
     Ok(())
 }

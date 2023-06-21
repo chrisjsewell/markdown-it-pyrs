@@ -103,6 +103,9 @@ class MarkdownIt:
 
         :param config: Configuration preset name.
         """
+    @staticmethod
+    def list_plugins() -> List[_PLUGIN_NAME]:
+        """List available plugins."""
     def enable(
         self,
         name: _PLUGIN_NAME,
