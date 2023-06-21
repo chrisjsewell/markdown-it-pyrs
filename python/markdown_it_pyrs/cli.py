@@ -7,15 +7,11 @@ import sys
 from . import MarkdownIt, __version__
 
 
-class ListPlugins(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        print("\n".join(MarkdownIt.list_plugins()))
-        sys.exit(0)
-
-
 def main(args: None | list[str] = None) -> None:
     """Run the CLI."""
-    parser = argparse.ArgumentParser(description="Parse Markdown using markdown-it.rs.")
+    parser = argparse.ArgumentParser(
+        description="Parse Markdown using markdown-it-pyrs"
+    )
     parser.add_argument(
         "--version",
         "-v",
@@ -31,8 +27,41 @@ def main(args: None | list[str] = None) -> None:
         help="Print available plugins and exit",
     )
 
-    
+    subparsers = parser.add_subparsers(title="Commands", metavar="", dest="subcommand")
 
+    parser_html = subparsers.add_parser("html", help="Render to HTML")
+    add_shared_args(parser_html)
+
+    parser_ast = subparsers.add_parser("ast", help="Render to Abstract Syntax Tree")
+    add_shared_args(parser_ast)
+    parser_ast.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Print node metadata",
+    )
+
+    parsed_args = parser.parse_args(args)
+    md = MarkdownIt(parsed_args.config)
+    if parsed_args.enable:
+        md.enable_many(parsed_args.enable.split(","))
+    if parsed_args.subcommand == "html":
+        print(md.render(parsed_args.file.read()))
+    if parsed_args.subcommand == "ast":
+        print(
+            md.tree(parsed_args.file.read()).pretty(
+                attrs=True, meta=parsed_args.verbose
+            )
+        )
+
+
+class ListPlugins(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        print("\n".join(MarkdownIt.list_plugins()))
+        sys.exit(0)
+
+
+def add_shared_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument(
         "file",
         type=argparse.FileType("r", encoding="utf8"),
@@ -46,7 +75,6 @@ def main(args: None | list[str] = None) -> None:
         default="commonmark",
         help="Configuration preset name (default: commonmark)",
     )
-    # comma-delimited string of plugin names to enable
     parser.add_argument(
         "--enable",
         "-e",
@@ -54,11 +82,6 @@ def main(args: None | list[str] = None) -> None:
         default="",
         help="Comma-delimited list of plugin names to enable",
     )
-    parsed_args = parser.parse_args(args)
-    md = MarkdownIt(parsed_args.config)
-    if parsed_args.enable:
-        md.enable_many(parsed_args.enable.split(","))
-    print(md.render(parsed_args.file.read()))
 
 
 if __name__ == "__main__":
