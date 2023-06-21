@@ -77,7 +77,7 @@ node.children[0].name = "other"
 print(child.name) # "other"
 ```
 
-### CLI
+### Command Line Interface
 
 A CLI is also provided, which can be used like this:
 
