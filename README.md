@@ -1,5 +1,10 @@
 # markdown-it-pyrs
 
+[![PyPI][pypi-badge]][pypi-link]
+
+[pypi-badge]: https://img.shields.io/pypi/v/markdown-it-pyrs.svg
+[pypi-link]: https://pypi.org/project/markdown-it-pyrs
+
 **Currently in Beta, feedback welcome!**
 
 A Python interface for [markdown-it.rs](https://github.com/rlidwka/markdown-it.rs) (and [plugins](https://github.com/chrisjsewell/markdown-it-plugins.rs)), using Rust for blazingly fast Markdown parsing ⚡️
