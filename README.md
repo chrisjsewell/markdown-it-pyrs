@@ -153,6 +153,7 @@ Others:
 - `smartquotes`: Smart quotes, like `"` to `“`
 - `front_matter`: YAML front matter
 - `footnote`: Pandoc-style footnotes (see <https://pandoc.org/MANUAL.html#footnotes>)
+- `heading_anchors`: Add heading anchors, with defaults like GitHub
 
 ## Development
 
@@ -171,10 +172,10 @@ Improvements:
   - lang_prefix: Prefix for language classes on fenced code blocks
   - quotes: Quote characters, for smart quotes
 
-- Add plugins:
-  - heading anchors (with option for slug format)
+- Add plugins: ...
 
 - Allow options for plugins:
+  - heading anchors
   - tasklist checkboxes to be disabled
   - footnotes with options to turn on/off inline/collect/backrefs
 
@@ -187,6 +188,7 @@ Improvements:
 Open issue upstream:
 
 - no `text_join` rule (to join adjacent `text` and `text_special` tokens)
+- `heading_anchors` plugin does not allow for e.g. GitHub format where non-uniqueness is resolved by appending `-1`, `-2`, etc, and also removal of image text
 - Capture reference nodes
 - Capture link reference definitions
 - Turn off code rule (and thus remove indent limit)
@@ -210,5 +212,6 @@ Open issue upstream:
 - is there a way to use a `match` statement, to match a Node against a `NodeValue` implementation? (rather than if/else for `Node.cast`)
 - Rule priority as an integer (similar to RST transform priority)
   - Currently can only specify `before` or `after` another rule or all rules
+  - Can feel a little unclear for plugins, when to use attrs and when to add fields to node value.
 
 Maintenance:
