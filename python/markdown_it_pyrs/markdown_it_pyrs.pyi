@@ -91,6 +91,7 @@ _PLUGIN_NAME = Literal[
     "front_matter",
     "tasklist",
     "footnote",
+    "heading_anchors",
 ]
 
 class MarkdownIt:

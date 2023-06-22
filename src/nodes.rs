@@ -106,7 +106,7 @@ impl Node {
     ) -> String {
         let mut inner = self.name.clone();
         if attrs {
-            for (key, value) in self.attrs.iter() {
+            for (key, value) in self.attrs.iter().sorted_by(|a, b| a.0.cmp(b.0)) {
                 inner.push_str(&format!(" {}=\"{}\"", key, value));
             }
         }
@@ -399,6 +399,15 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
     {
         py_node.name = "footnote_ref_anchor".to_string();
         py_node.add_data("ref_ids", node_value.ref_ids.to_object(py));
+    } else if let Some(node_value) = node.cast::<markdown_it_heading_anchors::HeadingAnchor>() {
+        py_node.name = "heading_anchor".to_string();
+        py_node.add_data("href", node_value.href.to_object(py));
+        match &node_value.id {
+            Some(id) => {
+                py_node.add_data("id", id.into_py(py));
+            }
+            None => {}
+        }
     }
 
     py_node

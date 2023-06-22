@@ -108,6 +108,7 @@ def test_ast(file_params):
             "tasklist",
             "linkify",
             "footnote",
+            "heading_anchors",
         ]
     )
     assert file_params.assert_expected(

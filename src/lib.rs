@@ -96,6 +96,9 @@ impl MarkdownIt {
             "footnote" => {
                 markdown_it_footnote::add(&mut self.parser);
             }
+            "heading_anchors" => {
+                markdown_it_heading_anchors::add(&mut self.parser);
+            }
             _ => {
                 return {
                     Err(pyo3::exceptions::PyValueError::new_err(format!(
@@ -184,6 +187,7 @@ impl MarkdownIt {
             "front_matter",
             "tasklist",
             "footnote",
+            "heading_anchors",
         ]
         .iter()
         .map(|s| s.to_string())
