@@ -77,6 +77,23 @@ node.children[0].name = "other"
 print(child.name) # "other"
 ```
 
+### Command Line Interface
+
+A CLI is also provided, which can be used like this:
+
+```bash
+echo "# Hello, world!" | markdown-it-pyrs html -
+# <h1>Hello, world!</h1>
+echo "# Hello, world!" | markdown-it-pyrs ast -
+# <root>
+#   <heading>
+#     <text>
+```
+
+Replace `-` with a filename to read from a file,
+and see `markdown-it-pyrs --help` for more options,
+including initial configuration and enabling plugins.
+
 ## Initial Configuration
 
 Initialising `MarkdownIt("zero")` will not enable any plugins, and so you can add only the ones you need.
@@ -145,7 +162,7 @@ I'm quite new to Rust, so if you see something that could be improved, issues an
 
 [pre-commit](https://pre-commit.com) is used to run code formatting and linting checks, and [tox](https://tox.readthedocs.io) is used to run tests.
 
-## TODO
+### TODO
 
 Improvements:
 
@@ -167,16 +184,13 @@ Improvements:
   - heading anchors, is not strictly in the spec, but should be noted
   - Add more testing
 
-- disable rules
-
-- Add CLI
-
 Open issue upstream:
 
 - no `text_join` rule (to join adjacent `text` and `text_special` tokens)
 - Capture reference nodes
 - Capture link reference definitions
-- Turn off code rule
+- Turn off code rule (and thus remove indent limit)
+- disable rules
 - better "cross-language" AST representation
 - differing behaviour of linkify and normalize_url/commonmark_extras test failures
 - quote characters for smart-quotes and lang_prefix for fence
