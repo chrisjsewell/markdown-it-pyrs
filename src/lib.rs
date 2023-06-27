@@ -99,6 +99,9 @@ impl MarkdownIt {
             "heading_anchors" => {
                 markdown_it_heading_anchors::add(&mut self.parser);
             }
+            "autolink_ext" => {
+                markdown_it_autolink::add(&mut self.parser);
+            }
             _ => {
                 return {
                     Err(pyo3::exceptions::PyValueError::new_err(format!(
@@ -133,7 +136,7 @@ impl MarkdownIt {
                 markdown_it::plugins::html::add(&mut parser);
                 markdown_it::plugins::extra::tables::add(&mut parser);
                 markdown_it::plugins::extra::strikethrough::add(&mut parser);
-                markdown_it::plugins::extra::linkify::add(&mut parser);
+                markdown_it_autolink::add(&mut parser);
                 markdown_it_tasklist::add(&mut parser);
                 Ok(Self {
                     parser,
@@ -188,6 +191,7 @@ impl MarkdownIt {
             "tasklist",
             "footnote",
             "heading_anchors",
+            "autolink_ext",
         ]
         .iter()
         .map(|s| s.to_string())

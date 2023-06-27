@@ -147,9 +147,9 @@ GitHub Flavoured Markdown (<https://github.github.com/gfm>):
   | --- | --- |
   | baz | bim |
   ```
-- `linkify`: Automatically linkify URLs
 - `strikethrough`: `~~strikethrough~~`
 - `tasklist`: `- [x] tasklist item`
+- `autolink_ext`: Extended autolink detection with "bare URLs" like `https://example.com` and `www.example.com`
 
 Others:
 
@@ -159,6 +159,7 @@ Others:
 - `front_matter`: YAML front matter
 - `footnote`: Pandoc-style footnotes (see <https://pandoc.org/MANUAL.html#footnotes>)
 - `heading_anchors`: Add heading anchors, with defaults like GitHub
+- `linkify`: Automatically linkify URLs with <https://crates.io/crates/linkify> (note currently this only matches URLs with a scheme, e.g. `https://example.com`)
 
 ## Development
 
@@ -185,7 +186,6 @@ Improvements:
   - footnotes with options to turn on/off inline/collect/backrefs
 
 - The `gfm` (Github Flavoured Markdown) initialisation mode needs improving
-  - `linkify` is not strictly equivalent to <https://github.github.com/gfm/#autolinks-extension->, e.g. it does not currently autolink `www.example.com`
   - Add <https://github.github.com/gfm/#disallowed-raw-html-extension->
   - heading anchors, is not strictly in the spec, but should be noted
   - Add more testing

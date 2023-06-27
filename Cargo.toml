@@ -12,6 +12,7 @@ crate-type = ["cdylib"]
 [dependencies]
 itertools = "0.11.0"
 markdown-it = "0.5.0"
+markdown-it-autolink = "0.1.0"
 markdown-it-footnote = "0.1.1"
 markdown-it-front-matter = "0.2.0"
 markdown-it-heading-anchors = "0.2.0"

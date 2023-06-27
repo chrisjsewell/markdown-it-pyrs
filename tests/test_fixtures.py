@@ -98,6 +98,12 @@ def test_footnote(file_params):
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
 
 
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("autolink_ext.md"))
+def test_autolink_ext(file_params):
+    md = MarkdownIt().enable("autolink_ext")
+    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("ast.md"))
 def test_ast(file_params):
     md = MarkdownIt().enable_many(
