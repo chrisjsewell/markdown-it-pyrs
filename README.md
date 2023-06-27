@@ -6,7 +6,7 @@
 [pypi-link]: https://pypi.org/project/markdown-it-pyrs
 
 <p align="center">
-  <img alt="markdown-it-pyrs icon" src="https://raw.githubusercontent.com/chrisjsewell/markdown-it-pyrs/main/docs/_static/markdown-it-py.svg">
+  <img alt="markdown-it-pyrs icon" src="https://raw.githubusercontent.com/chrisjsewell/markdown-it-pyrs/main/docs/_static/markdown-it.rs.svg">
 </p>
 
 **Currently in Beta, feedback welcome!**
