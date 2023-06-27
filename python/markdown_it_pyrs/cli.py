@@ -29,9 +29,6 @@ def main(args: None | list[str] = None) -> None:
 
     subparsers = parser.add_subparsers(title="Commands", metavar="", dest="subcommand")
 
-    parser_html = subparsers.add_parser("html", help="Render to HTML")
-    add_shared_args(parser_html)
-
     parser_ast = subparsers.add_parser("ast", help="Render to Abstract Syntax Tree")
     add_shared_args(parser_ast)
     parser_ast.add_argument(
@@ -41,18 +38,32 @@ def main(args: None | list[str] = None) -> None:
         help="Print node metadata",
     )
 
+    parser_html = subparsers.add_parser("html", help="Render to HTML")
+    add_shared_args(parser_html)
+    group = parser_html.add_mutually_exclusive_group(required=False)
+    group.add_argument(
+        "--no-xhtml",
+        dest="xhtml",
+        action="store_false",
+        help="Don't add /> to self-closing tags",
+    )
+    group.add_argument(
+        "--xhtml", dest="xhtml", action="store_true", help=argparse.SUPPRESS
+    )
+    parser_html.set_defaults(xhtml=True)
+
     parsed_args = parser.parse_args(args)
     md = MarkdownIt(parsed_args.config)
     if parsed_args.enable:
         md.enable_many(parsed_args.enable.split(","))
-    if parsed_args.subcommand == "html":
-        print(md.render(parsed_args.file.read()))
     if parsed_args.subcommand == "ast":
         print(
             md.tree(parsed_args.file.read()).pretty(
                 attrs=True, meta=parsed_args.verbose
             )
         )
+    elif parsed_args.subcommand == "html":
+        print(md.render(parsed_args.file.read(), xhtml=parsed_args.xhtml))
 
 
 class ListPlugins(argparse.Action):

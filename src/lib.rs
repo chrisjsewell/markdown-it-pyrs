@@ -4,9 +4,9 @@ mod nodes;
 
 /// Main parser class
 #[pyclass]
+#[derive(Debug)]
 pub struct MarkdownIt {
     parser: markdown_it::MarkdownIt,
-    xhtml_out: bool,
 }
 
 impl MarkdownIt {
@@ -125,10 +125,7 @@ impl MarkdownIt {
                 let mut parser = markdown_it::MarkdownIt::new();
                 markdown_it::plugins::cmark::add(&mut parser);
                 markdown_it::plugins::html::add(&mut parser);
-                Ok(Self {
-                    parser,
-                    xhtml_out: true,
-                })
+                Ok(Self { parser })
             }
             "gfm" => {
                 let mut parser = markdown_it::MarkdownIt::new();
@@ -138,20 +135,21 @@ impl MarkdownIt {
                 markdown_it::plugins::extra::strikethrough::add(&mut parser);
                 markdown_it_autolink::add(&mut parser);
                 markdown_it_tasklist::add(&mut parser);
-                Ok(Self {
-                    parser,
-                    xhtml_out: true,
-                })
+                Ok(Self { parser })
             }
             "zero" => Ok(Self {
                 parser: markdown_it::MarkdownIt::new(),
-                xhtml_out: false,
             }),
             _ => Err(pyo3::exceptions::PyValueError::new_err(format!(
                 "Unknown config: {}",
                 config
             ))),
         }
+    }
+
+    /// Return a debug representation of the rust struct
+    fn _debug(&self) -> String {
+        format!("{:#?}", self)
     }
 
     // keep this private for now, whilst we work out how to expose it properly
@@ -213,9 +211,11 @@ impl MarkdownIt {
     }
 
     /// Render markdown string into HTML.
-    fn render(&self, src: &str) -> String {
+    /// If `xhtml` is true, then self-closing tags will include a slash, e.g. `<br />`.
+    #[pyo3(signature = (src, *, xhtml=true))]
+    fn render(&self, src: &str, xhtml: bool) -> String {
         let ast = self.parser.parse(src);
-        match self.xhtml_out {
+        match xhtml {
             true => ast.xrender(),
             false => ast.render(),
         }

@@ -124,10 +124,11 @@ class MarkdownIt:
 
         :param names: Plugin names.
         """
-    def render(self, src: str) -> str:
+    def render(self, src: str, *, xhtml: bool = True) -> str:
         """Render Markdown to HTML.
 
         :param src: Markdown source.
+        :param xhtml: If true, self-closing tags will include a slash, e.g. `<br />`.
         :returns: HTML.
         """
     def tree(self, src: str) -> Node:
