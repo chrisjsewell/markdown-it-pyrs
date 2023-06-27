@@ -31,6 +31,12 @@ def test_gfm() -> None:
     assert mdit.render("# markdown-it rulezz!") == "<h1>markdown-it rulezz!</h1>\n"
 
 
+def test_render_xhtml() -> None:
+    mdit = MarkdownIt()
+    assert mdit.render("![a](b)") == '<p><img src="b" alt="a" /></p>\n'
+    assert mdit.render("![a](b)", xhtml=False) == '<p><img src="b" alt="a"></p>\n'
+
+
 def test_node() -> None:
     node = Node("root")
     assert node.name == "root"
