@@ -408,6 +408,15 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
             }
             None => {}
         }
+    } else if node.cast::<markdown_it_deflist::DefinitionList>().is_some() {
+        py_node.name = "definition_list".to_string();
+    } else if node.cast::<markdown_it_deflist::DefinitionTerm>().is_some() {
+        py_node.name = "definition_term".to_string();
+    } else if node
+        .cast::<markdown_it_deflist::DefinitionDescription>()
+        .is_some()
+    {
+        py_node.name = "definition_description".to_string();
     }
 
     py_node

@@ -102,6 +102,9 @@ impl MarkdownIt {
             "autolink_ext" => {
                 markdown_it_autolink::add(&mut self.parser);
             }
+            "deflist" => {
+                markdown_it_deflist::add(&mut self.parser);
+            }
             _ => {
                 return {
                     Err(pyo3::exceptions::PyValueError::new_err(format!(
@@ -190,6 +193,7 @@ impl MarkdownIt {
             "footnote",
             "heading_anchors",
             "autolink_ext",
+            "deflist",
         ]
         .iter()
         .map(|s| s.to_string())

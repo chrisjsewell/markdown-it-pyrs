@@ -336,6 +336,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "markdown-it-deflist"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b09f0e1ac20b7a75f1c8127ef7cd6c9fecd5c35aebd908534e2fa45edc0263eb"
+dependencies = [
+ "markdown-it",
+]
+
+[[package]]
 name = "markdown-it-footnote"
 version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -377,11 +386,12 @@ dependencies = [
 
 [[package]]
 name = "markdown_it_pyrs"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "itertools",
  "markdown-it",
  "markdown-it-autolink",
+ "markdown-it-deflist",
  "markdown-it-footnote",
  "markdown-it-front-matter",
  "markdown-it-heading-anchors",
