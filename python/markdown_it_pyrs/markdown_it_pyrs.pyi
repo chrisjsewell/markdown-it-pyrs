@@ -93,6 +93,7 @@ _PLUGIN_NAME = Literal[
     "footnote",
     "heading_anchors",
     "autolink_ext",
+    "deflist",
 ]
 
 class MarkdownIt:

@@ -137,3 +137,18 @@ heading_anchors
     <text srcmap="2:11">
       content: Heading 1
 .
+
+deflists
+.
+Term 1
+  ~ Definition 1
+.
+<root srcmap="0:24">
+  <definition_list srcmap="0:23">
+    <definition_term srcmap="0:6">
+      <text srcmap="0:6">
+        content: Term 1
+    <definition_description srcmap="11:23">
+      <text srcmap="11:23">
+        content: Definition 1
+.

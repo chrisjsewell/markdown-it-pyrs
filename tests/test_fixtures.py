@@ -104,6 +104,12 @@ def test_autolink_ext(file_params):
     assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
 
 
+@pytest.mark.param_file(FIXTURE_PATH.joinpath("deflist.md"))
+def test_deflist(file_params):
+    md = MarkdownIt().enable("deflist")
+    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+
+
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("ast.md"))
 def test_ast(file_params):
     md = MarkdownIt().enable_many(
@@ -115,6 +121,7 @@ def test_ast(file_params):
             "linkify",
             "footnote",
             "heading_anchors",
+            "deflist",
         ]
     )
     assert file_params.assert_expected(

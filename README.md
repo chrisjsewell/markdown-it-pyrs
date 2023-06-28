@@ -160,10 +160,11 @@ Others:
 - `sourcepos`: Add source mapping to rendered HTML, looks like this: `<stuff data-sourcepos="1:1-2:3">`, i.e. `line:col-line:col`
 - `replacements`: Typographic replacements, like `--` to `—`
 - `smartquotes`: Smart quotes, like `"` to `“`
+- `linkify`: Automatically linkify URLs with <https://crates.io/crates/linkify> (note currently this only matches URLs with a scheme, e.g. `https://example.com`)
+- `heading_anchors`: Add heading anchors, with defaults like GitHub
 - `front_matter`: YAML front matter
 - `footnote`: Pandoc-style footnotes (see <https://pandoc.org/MANUAL.html#footnotes>)
-- `heading_anchors`: Add heading anchors, with defaults like GitHub
-- `linkify`: Automatically linkify URLs with <https://crates.io/crates/linkify> (note currently this only matches URLs with a scheme, e.g. `https://example.com`)
+- `deflist`: Definition lists (see <https://pandoc.org/MANUAL.html#definition-lists>)
 
 ## Development
 
