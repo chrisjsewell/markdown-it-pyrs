@@ -20,17 +20,17 @@ def test_cmark_spec(entry):
 
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("commonmark_extras.md"))
 def test_commonmark_extras(file_params):
-    if file_params.title in (
-        "Don't output empty class here:",
-        "Tabs should not cause hardbreak, EOL tabs aren't stripped in commonmark 0.27",
-        "Newline in image description",
-    ):
-        pytest.skip("known issue")
-    md = MarkdownIt()
     md = MarkdownIt("commonmark")
     md._unset_lang_prefix()
     text = md.render(file_params.content)
-    assert file_params.assert_expected(text, rstrip=True)
+    try:
+        assert file_params.assert_expected(text, rstrip=True)
+    except AssertionError:
+        if file_params.title in (
+            "Tabs should not cause hardbreak, EOL tabs aren't stripped in commonmark 0.27",
+        ):
+            pytest.xfail("known issue")
+        raise
 
 
 # @pytest.mark.param_file(FIXTURE_PATH.joinpath("linkify.md"))
@@ -59,13 +59,16 @@ def test_table(file_params):
 
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("normalize.md"))
 def test_normalize_url(file_params):
-    if file_params.title in (
-        "Keep %25 as is because decoding it may break urls, #720",
-        "Encode link destination, decode text inside it",
-    ):
-        pytest.skip("known issue")
     md = MarkdownIt()
-    assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+    try:
+        assert file_params.assert_expected(md.render(file_params.content), rstrip=True)
+    except AssertionError:
+        if file_params.title in (
+            "Keep %25 as is because decoding it may break urls, #720",
+            "Encode link destination, decode text inside it",
+        ):
+            pytest.xfail("known issue")
+        raise
 
 
 @pytest.mark.param_file(FIXTURE_PATH.joinpath("strikethrough.md"))
