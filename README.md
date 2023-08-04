@@ -154,6 +154,7 @@ GitHub Flavoured Markdown (<https://github.github.com/gfm>):
 - `strikethrough`: `~~strikethrough~~`
 - `tasklist`: `- [x] tasklist item`
 - `autolink_ext`: Extended autolink detection with "bare URLs" like `https://example.com` and `www.example.com`
+- `tagfilter`: HTML tag filtering, e.g. `<script>` tags are removed
 
 Others:
 
@@ -179,7 +180,6 @@ I'm quite new to Rust, so if you see something that could be improved, issues an
 Improvements:
 
 - Allow to override options:
-  - xhtml_out: Use `"/"` to close single tags (e.g. `<br />`)
   - lang_prefix: Prefix for language classes on fenced code blocks
   - quotes: Quote characters, for smart quotes
 
@@ -190,18 +190,11 @@ Improvements:
   - tasklist checkboxes to be disabled
   - footnotes with options to turn on/off inline/collect/backrefs
 
-- The `gfm` (Github Flavoured Markdown) initialisation mode needs improving
-  - Add <https://github.github.com/gfm/#disallowed-raw-html-extension->
-  - heading anchors, is not strictly in the spec, but should be noted
-  - Add more testing
-
 Open issue upstream:
 
 - no `text_join` rule (to join adjacent `text` and `text_special` tokens)
 - `heading_anchors` plugin does not allow for e.g. GitHub format where non-uniqueness is resolved by appending `-1`, `-2`, etc, and also removal of image text
-- Capture reference nodes
-- Capture link reference definitions
-- Turn off code rule (and thus remove indent limit)
+- Capture reference nodes in AST
 - disable rules
 - better "cross-language" AST representation
 - differing behaviour of linkify and normalize_url/commonmark_extras test failures
@@ -209,7 +202,6 @@ Open issue upstream:
   should both be variable at run-time? (currently they both must be compiled)
 - fix docstring in `examples/ferris/block_rule.rs::FerrisBlockScanner::run`,
   which currently describes the JS API not the new rust one
-- also some functions/methods use `//` not `///` for docstrings
 - Capture "piece-wise" source maps for nested content, e.g. for when the source is split over multiple lines and nested in another block (could get inline here <https://github.com/rlidwka/markdown-it.rs/blob/6f906b38c8ffc3cc651e67b448b3655b7d0debb3/src/parser/inline/mod.rs#L115>)
 - easier way to get `root.ext` items in core rules; it seems at present you have to swap memory and reswap at the end of the rule, see e.g. the `InlineParserRule`
 - allow `test_rules_at_line` to parse what the calling rule is, so that other rules can decide whether to interrupt based on the calling rule (in the `check` function), I think this would then allow behaviour similar to what `alt` did (possibly needed for footnote definition parsing)
