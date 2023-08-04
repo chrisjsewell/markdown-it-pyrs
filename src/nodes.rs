@@ -280,6 +280,21 @@ pub fn create_node(py: Python, node: &markdown_it::Node) -> Node {
             }
             None => {}
         }
+    } else if let Some(node_value) =
+        node.cast::<markdown_it::plugins::cmark::block::reference::Definition>()
+    {
+        py_node.name = "definition".to_string();
+        py_node.add_data("label", node_value.label.to_string().into_py(py));
+        py_node.add_data(
+            "destination",
+            node_value.destination.to_string().into_py(py),
+        );
+        match &node_value.title {
+            Some(title) => {
+                py_node.add_data("title", title.to_string().into_py(py));
+            }
+            None => {}
+        }
     } else if node
         .cast::<markdown_it::plugins::cmark::inline::newline::Hardbreak>()
         .is_some()

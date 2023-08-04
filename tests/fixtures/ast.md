@@ -1,3 +1,14 @@
+reference-definition
+.
+[a]: b "c"
+.
+<root srcmap="0:11">
+  <definition srcmap="0:10">
+    destination: b
+    label: a
+    title: c
+.
+
 front-matter
 .
 ---

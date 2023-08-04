@@ -132,12 +132,7 @@ impl MarkdownIt {
             }
             "gfm" => {
                 let mut parser = markdown_it::MarkdownIt::new();
-                markdown_it::plugins::cmark::add(&mut parser);
-                markdown_it::plugins::html::add(&mut parser);
-                markdown_it::plugins::extra::tables::add(&mut parser);
-                markdown_it::plugins::extra::strikethrough::add(&mut parser);
-                markdown_it_autolink::add(&mut parser);
-                markdown_it_tasklist::add(&mut parser);
+                markdown_it_gfm::add(&mut parser);
                 Ok(Self { parser })
             }
             "zero" => Ok(Self {
