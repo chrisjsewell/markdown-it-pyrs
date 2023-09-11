@@ -22,7 +22,7 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - uses: actions/setup-python@v4
       with:
         python-version: "3.9"
@@ -31,7 +31,7 @@ jobs:
   cargo-clippy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install rust stable
       uses: dtolnay/rust-toolchain@stable
     - name: cache rust
@@ -52,7 +52,7 @@ jobs:
         - '3.11'
         - 'pypy3.8'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: cache rust
@@ -82,7 +82,7 @@ jobs:
         # - s390x  # TODO build fails: "error: failed to run custom build command for `psm v0.1.21`""
         - ppc64le
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: "3.10"
@@ -130,7 +130,7 @@ jobs:
       matrix:
         target: [x64, x86]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -163,7 +163,7 @@ jobs:
       matrix:
         target: [x86_64, aarch64]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
@@ -191,7 +191,7 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
