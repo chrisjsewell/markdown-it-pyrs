@@ -28,10 +28,13 @@ class Node:
 
         :param name: The type of the node.
         """
+
     def __repr__(self) -> str:
         """Return a string representation of the node."""
+
     def __str__(self) -> str:
         """Return a string representation of the node."""
+
     def walk(self, *, include_self: bool = True) -> Iterable["Node"]:
         """Recursively yield all descendant nodes in the tree.
 
@@ -40,6 +43,7 @@ class Node:
 
         :param include_self: whether to include self in the output
         """
+
     def pretty(
         self,
         *,
@@ -106,9 +110,11 @@ class MarkdownIt:
 
         :param config: Configuration preset name.
         """
+
     @staticmethod
     def list_plugins() -> List[_PLUGIN_NAME]:
         """List available plugins."""
+
     def enable(
         self,
         name: _PLUGIN_NAME,
@@ -117,6 +123,7 @@ class MarkdownIt:
 
         :param name: Plugin name.
         """
+
     def enable_many(
         self,
         names: List[_PLUGIN_NAME],
@@ -125,6 +132,7 @@ class MarkdownIt:
 
         :param names: Plugin names.
         """
+
     def render(self, src: str, *, xhtml: bool = True) -> str:
         """Render Markdown to HTML.
 
@@ -132,6 +140,7 @@ class MarkdownIt:
         :param xhtml: If true, self-closing tags will include a slash, e.g. `<br />`.
         :returns: HTML.
         """
+
     def tree(self, src: str) -> Node:
         """Create a syntax tree from the Markdown source.
 
