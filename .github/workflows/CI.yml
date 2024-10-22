@@ -22,8 +22,8 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: "3.9"
     - uses: pre-commit/action@v3.0.0
@@ -31,7 +31,7 @@ jobs:
   cargo-clippy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: install rust stable
       uses: dtolnay/rust-toolchain@stable
     - name: cache rust
@@ -46,13 +46,13 @@ jobs:
       fail-fast: false
       matrix:
         python-version:
-        - '3.8'
         - '3.9'
         - '3.10'
         - '3.11'
-        - 'pypy3.8'
+        - '3.12'
+        - 'pypy3.9'
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: install rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: cache rust
@@ -60,7 +60,7 @@ jobs:
         with:
           key: test-v1
       - name: set up python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e .[testing]
@@ -82,8 +82,8 @@ jobs:
         # - s390x  # TODO build fails: "error: failed to run custom build command for `psm v0.1.21`""
         - ppc64le
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
       - name: Build wheels
@@ -109,7 +109,7 @@ jobs:
           pytest
       - name: pytest
         if: ${{ !startsWith(matrix.target, 'x86') && matrix.target != 'ppc64' }}
-        uses: uraimo/run-on-arch-action@v2.5.0
+        uses: uraimo/run-on-arch-action@v2
         with:
           arch: ${{ matrix.target }}
           distro: ubuntu22.04
@@ -130,8 +130,8 @@ jobs:
       matrix:
         target: [x64, x86]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
           architecture: ${{ matrix.target }}
@@ -163,8 +163,8 @@ jobs:
       matrix:
         target: [x86_64, aarch64]
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.10'
       - name: Build wheels
@@ -191,7 +191,7 @@ jobs:
   sdist:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Build sdist
         uses: PyO3/maturin-action@v1
         with:
