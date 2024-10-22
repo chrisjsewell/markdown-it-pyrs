@@ -9,7 +9,7 @@ description = "A Python interface for markdown-it.rs, using Rust for blazingly f
 readme = "README.md"
 authors = [{name = "Chris Sewell", email = "chrisj_sewell@hotmail.com"}]
 license = {file = "LICENSE"}
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 keywords = ["markdown", "lexer", "parser", "commonmark", "markdown-it"]
 classifiers = [
     "Development Status :: 4 - Beta",
