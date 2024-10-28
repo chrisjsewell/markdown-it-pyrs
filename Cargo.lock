@@ -193,9 +193,9 @@ dependencies = [
 
 [[package]]
 name = "markdown-it"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "181d1b4704b0a2fc6027d3f758a7eedb975dcbaab86e6794901b8cfc52af94d5"
+checksum = "f99c010929c8217b2dc0940954267a2e15a15f17cb309cd1f299e21933f84fac"
 dependencies = [
  "argparse",
  "const_format",
@@ -287,7 +287,7 @@ dependencies = [
 
 [[package]]
 name = "markdown_it_pyrs"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "itertools",
  "markdown-it",
