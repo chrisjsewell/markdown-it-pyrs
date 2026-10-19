@@ -69,13 +69,10 @@ def test_tree_walk() -> None:
 
 def test_tree_pretty() -> None:
     mdit = MarkdownIt()
-    assert (
-        mdit.tree("# markdown-it rulezz!").pretty(srcmap=True, meta=True)
-        == """\
+    assert mdit.tree("# markdown-it rulezz!").pretty(srcmap=True, meta=True) == """\
 <root srcmap="0:21">
   <heading srcmap="0:21">
     level: 1
     <text srcmap="2:21">
       content: markdown-it rulezz!
 """
-    )
